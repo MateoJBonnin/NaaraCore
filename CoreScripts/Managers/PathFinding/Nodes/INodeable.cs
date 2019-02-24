@@ -5,4 +5,5 @@ using UnityEngine;
 public interface INodeable
 {
     List<INodeable> NeighNodes { get; set; }
+    List<INodeable> GetNeighNodes();
 }

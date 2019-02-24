@@ -16,13 +16,14 @@ public class LocalAIInput : MonoBehaviour, IInputControllable
     private AbstractAIPlanResolver aiplanResolver;
     private DefaultAIActionResolver aiActionResolver;
     private AbstractAIThinker aiThinker;
+    //change this to be called upon use only
     private AIPatrolSetup patrolSetup;
     //
 
     public void SetLogic(LogicEntity logicEntity)
     {
         this.LogicEntity = logicEntity;
-        this.patrolSetup = new AIPatrolSetup(new List<AIPatrolPosition>(), new InstantPatrolTimePolicy(), new FixedListedPositionAIPatrolBehaviour(this.LogicEntity, new OrderedPatrolCoordinator(this.LogicEntity)));
+        this.patrolSetup = new AIPatrolSetup(new List<AIPatrolPosition>() { }, new InstantPatrolTimePolicy(), new FixedListedPositionAIPatrolBehaviour(this.LogicEntity, new OrderedPatrolCoordinator(this.LogicEntity)));
         this.aIBlackboard = new AIBlackboard(this.LogicEntity, new AIBlackboardSetup(patrolSetup));
         this.ThinkActions();
     }

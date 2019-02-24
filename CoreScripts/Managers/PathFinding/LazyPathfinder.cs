@@ -36,7 +36,7 @@ public class LazyPathfinder<Node> : IEnumerator<Node> where Node : class
 
     public bool MoveNext()
     {
-        this.pathFinderStates.Add(ProcessNextState(this.pathFinderStates[this.currentStateIndex]));
+        this.pathFinderStates.Add(this.ProcessNextState(this.pathFinderStates[this.currentStateIndex]));
         this.currentStateIndex++;
         return pathFinderStates[this.currentStateIndex].openNodes.Count > 0;
     }

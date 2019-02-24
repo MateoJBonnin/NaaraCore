@@ -9,21 +9,8 @@ using Managers;
 public class PathNode : MonoBehaviour, INodeable, IPooleable, INavTargeteable
 {
     public float connectionsRadius;
-
     public List<INodeable> NeighNodes { get; set; }
-
     public event Action<IPooleable> OnReturnedItem;
-
-    //public List<INodeable> ComputeConnectionNodes()
-    //{
-    //    List<PathNode> allNodes = MapManager.Instance.GetPathNodes();
-    //    allNodes = allNodes
-    //        .Where(node => Vector3.SqrMagnitude(node.transform.position - this.transform.position) <= connectionsRadius)
-    //        .Where(node => node != this)
-    //        .ToList();
-    //    this.nearNodes = allNodes;
-    //    return this.nearNodes.Select(node => (INodeable)node).ToList();
-    //}
 
     public void DisableObject()
     {
@@ -38,6 +25,17 @@ public class PathNode : MonoBehaviour, INodeable, IPooleable, INavTargeteable
     public virtual List<INavTargeteable> GetClosests()
     {
         return this.NeighNodes.Select(node => (INavTargeteable)node).ToList();
+    }
+
+    public List<INodeable> GetNeighNodes()
+    {
+        List<INodeable> neighNodes = new List<INodeable>(ManagersService.instace.GetManager<GameMap>().mapManager.GetPathNodes());
+        neighNodes = neighNodes
+             .Where(n => Vector3.SqrMagnitude(((PathNode)n).transform.position - transform.position) <= connectionsRadius)
+             .Where(n => ((PathNode)n) != this)
+             .ToList();
+
+        return neighNodes;
     }
 
     public Vector3 GetPosition()

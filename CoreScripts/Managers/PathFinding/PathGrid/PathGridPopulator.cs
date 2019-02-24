@@ -2,17 +2,17 @@
 using System.Collections.Generic;
 using System.Linq;
 
-public class PathGridPopulator
+public class PathGridPopulator<T>
 {
-    public AbstractGridPopulatorTechnic abstractGridPopulator;
+    public AbstractGridPopulatorTechnic<T> abstractGridPopulator;
 
-    public PathGridPopulator(AbstractGridPopulatorTechnic abstractGridPopulator)
+    public PathGridPopulator(AbstractGridPopulatorTechnic<T> abstractGridPopulator)
     {
         this.abstractGridPopulator = abstractGridPopulator;
     }
 
-    public List<PathNode> InitGrid(Func<INodeable> getNode)
+    public List<T> InitGrid(Func<INodeable> getNode)
     {
-        return this.abstractGridPopulator.PopulateGrid(getNode).Select(node => (PathNode)node).ToList();
+        return this.abstractGridPopulator.PopulateGrid(getNode).Select(node => (T)node).ToList();
     }
 }
