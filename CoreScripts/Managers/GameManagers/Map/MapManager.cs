@@ -58,12 +58,6 @@ namespace Managers
             return this.GetClosestNodeTo(logicEntity.ViewEntity);
         }
 
-        public T GetRandomNode()
-        {
-            int randomIndex = UnityEngine.Random.Range(0, this.PathNodes.Count);
-            return this.PathNodes[randomIndex];
-        }
-
         public List<T> GetRandomNodes(AbstractMapNodesRequester<T> mapNodesRequester)
         {
             return mapNodesRequester.GetNodes(this.PathNodes);

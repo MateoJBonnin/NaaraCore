@@ -5,9 +5,9 @@ using UnityEngine;
 
 namespace Managers
 {
-    public class CoroutineManager : Manager
+    public class GameCoroutineManager : Manager
     {
-        public static CoroutineManager instance;
+        public static GameCoroutineManager instance;
 
         public void Awake()
         {

@@ -18,12 +18,13 @@ public class InputToLogicController : MonoBehaviour, IInputControllable
 
     public void Update()
     {
-        // change this for a manager of entities
+        //TODO: change this for a manager of entities
         this.LogicEntity?.Update();
     }
 
     public void ProcessInputEvent(EntityInputSentEvent entityInputSentEvent)
     {
-        this.LogicEntity.ProcessAction(entityInputSentEvent.ActionType, entityInputSentEvent.actionData);
+        if (this.LogicEntity.Equals(entityInputSentEvent.LogicEntity))
+            this.LogicEntity.ProcessAction(entityInputSentEvent.ActionType, entityInputSentEvent.ActionData);
     }
 }

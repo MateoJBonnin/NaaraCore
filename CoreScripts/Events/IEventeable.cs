@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface IGameEvent : IEventeable
+public interface IEventeable
 {
-
 }

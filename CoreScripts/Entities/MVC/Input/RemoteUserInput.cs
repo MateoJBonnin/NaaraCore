@@ -4,9 +4,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
-public class RemoteUserInput : NetworkBehaviour
+public class RemoteUserInput : NetworkBehaviour, IInputControllable
 {
     private EntityInputsManager gameInputsManager;
+
+    public LogicEntity LogicEntity { get; set; }
 
     public void Start()
     {
@@ -28,7 +30,7 @@ public class RemoteUserInput : NetworkBehaviour
     [Command]
     public void CmdAttack()
     {
-        GameEventSystem.instance.DispatchEvent(new EntityInputSentEvent(ActionRequestType.Attack));
+        GameEventSystem.instance.DispatchEvent(new EntityInputSentEvent(ActionRequestType.Attack, this.LogicEntity));
     }
 
     [Command]
@@ -38,6 +40,11 @@ public class RemoteUserInput : NetworkBehaviour
         moveInputsData.AddField(GameInputsManager.X_AXIS_KEY, xAxis);
         moveInputsData.AddField(GameInputsManager.Z_AXIS_KEY, zAxis);
 
-        GameEventSystem.instance.DispatchEvent(new EntityInputSentEvent(ActionRequestType.Move, moveInputsData));
+        GameEventSystem.instance.DispatchEvent(new EntityInputSentEvent(ActionRequestType.Move, this.LogicEntity, moveInputsData));
+    }
+
+    public void SetLogic(LogicEntity logicEntity)
+    {
+        this.LogicEntity = logicEntity;
     }
 }

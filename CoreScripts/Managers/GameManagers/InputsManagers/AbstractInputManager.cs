@@ -7,39 +7,27 @@ namespace Managers
 {
     public class AbstractInputManager<T> : Manager
     {
-        public Dictionary<T, List<Action<JSONObject>>> inputsDatabase { get; set; }
+        public DictionaryWithListDatabaseStructure<T, Action<JSONObject>> inputsDatabase;
         private List<Action<JSONObject>> emptyJsonList = new List<Action<JSONObject>>();
 
         public AbstractInputManager()
         {
-            this.inputsDatabase = new Dictionary<T, List<Action<JSONObject>>>();
+            this.inputsDatabase = new DictionaryWithListDatabaseStructure<T, Action<JSONObject>>();
         }
 
         public void SubscribeToInput(T inputType, Action<JSONObject> inputAction)
         {
-            List<Action<JSONObject>> actionList = null;
-            this.inputsDatabase.TryGetValue(inputType, out actionList);
-
-            if (null == actionList)
-                this.inputsDatabase[inputType] = new List<Action<JSONObject>>() { inputAction };
-            else
-                actionList.Add(inputAction);
+            this.inputsDatabase.RegisterData(inputType, inputAction);
         }
 
         public void RemoveSubscription(T inputType, Action<JSONObject> inputAction)
         {
-            List<Action<JSONObject>> actionList = null;
-            this.inputsDatabase.TryGetValue(inputType, out actionList);
-
-            if (null != actionList)
-                actionList.Remove(inputAction);
+            this.inputsDatabase.RemoveData(inputType, inputAction);
         }
 
         public void TriggerInput(T inputType, JSONObject data)
         {
-            List<Action<JSONObject>> actionList = null;
-            this.inputsDatabase.TryGetValue(inputType, out actionList);
-
+            List<Action<JSONObject>> actionList = this.inputsDatabase.GetData(inputType);
             actionList = actionList != null ? actionList : this.emptyJsonList;
             foreach (var action in actionList)
                 action?.Invoke(data);

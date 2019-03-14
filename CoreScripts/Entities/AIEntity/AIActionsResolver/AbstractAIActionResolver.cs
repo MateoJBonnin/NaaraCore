@@ -3,11 +3,11 @@ using System.Collections.Generic;
 
 public abstract class AbstractAIActionResolver
 {
-    protected LogicEntity logicEntity;
+    protected AIBlackboard aIBlackboard;
 
-    public AbstractAIActionResolver(LogicEntity logicEntity)
+    public AbstractAIActionResolver(AIBlackboard aIBlackboard)
     {
-        this.logicEntity = logicEntity;
+        this.aIBlackboard = aIBlackboard;
     }
 
     public List<IAIAction> GetAvailableActions()
@@ -19,7 +19,7 @@ public abstract class AbstractAIActionResolver
     {
         Dictionary<Type, List<IAIAction>> aiActionsDatabase = this.FillAIActions();
         List<IAIAction> actionList = new List<IAIAction>();
-        foreach (KeyValuePair<ActionRequestType, FSMState> actionStorage in this.logicEntity.ActionFSM.FSMConfig.statesDatabase)
+        foreach (KeyValuePair<ActionRequestType, FSMState> actionStorage in this.aIBlackboard.AILogicEntity.ActionFSM.FSMConfig.statesDatabase)
             actionList.AddRange(aiActionsDatabase[actionStorage.Value.GetType()]);
 
         return actionList;

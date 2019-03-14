@@ -1,8 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class AIPatrolPosition : MonoBehaviour
+﻿
+public class AIPatrolPosition
 {
     public INavTargeteable patrolPosition;
+
+    public AIPatrolPosition(INavTargeteable patrolPosition)
+    {
+        this.patrolPosition = patrolPosition;
+    }
 }

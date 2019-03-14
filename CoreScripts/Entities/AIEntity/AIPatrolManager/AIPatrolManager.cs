@@ -41,6 +41,7 @@ public class AIPatrolManager : SubManager
     public override void UpdateSubManager()
     {
         base.UpdateSubManager();
+        this.aiPatrolFSM.Update();
     }
 
     private Dictionary<AIPatrolState, FSMState> GetAIPatrollingStatesConfig()

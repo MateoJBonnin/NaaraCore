@@ -10,9 +10,9 @@ namespace Managers
 
         protected SubManagerSystem<SubManager> subManagerSystem;
 
-        private Initializer initializer;
+        private GameplayManagersInitializer initializer;
 
-        public void Setup(Initializer initializer)
+        public void Setup(GameplayManagersInitializer initializer)
         {
             this.subManagerSystem = new SubManagerSystem<SubManager>();
             this.subManagerSystem.OnAllInitialSubManagersReady += () => this.OnManagerReady?.Invoke(this);

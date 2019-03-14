@@ -34,9 +34,14 @@ public class SubManagerSystem<T> where T : SubManager
             subManager.UpdateSubManager();
     }
 
+    public List<T> GetAllSubManagers()
+    {
+        return this.subManagers.ToList();
+    }
+
     public void GetManagerWhenReady<W>(Action<W> onManagerReadyCallback) where W : T
     {
-        CoroutineManager.instance.StartCoroutine(this.CheckIfManagerIsReady(onManagerReadyCallback));
+        GameCoroutineManager.instance.StartCoroutine(this.CheckIfManagerIsReady(onManagerReadyCallback));
     }
 
     public W GetManagerWhenReady<W>() where W : T
@@ -82,7 +87,7 @@ public class SubManagerSystem<T> where T : SubManager
 
     private void WaitForSubManagersToBeReady()
     {
-        CoroutineManager.instance.StartCoroutine(this.CheckIfAllSubManagersAreReady());
+        GameCoroutineManager.instance.StartCoroutine(this.CheckIfAllSubManagersAreReady());
     }
 
     private IEnumerator CheckIfAllSubManagersAreReady()

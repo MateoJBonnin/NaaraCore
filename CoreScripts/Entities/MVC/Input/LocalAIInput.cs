@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Managers;
+using System.Linq;
 
 public class LocalAIInput : MonoBehaviour, IInputControllable
 {
@@ -9,7 +10,7 @@ public class LocalAIInput : MonoBehaviour, IInputControllable
 
     private Dictionary<AIState, Func<FSMState>> entityDefaultTypeToAction;
     private GenericFSM<AIState> aiInputFSM { get; set; }
-    private CoroutineManager coroutineManager;
+    private GameCoroutineManager coroutineManager;
     private AIBlackboard aIBlackboard;
 
     //TODO: check this, this may come from who initialices the AI, because it will be hardcodedfor now
@@ -23,14 +24,16 @@ public class LocalAIInput : MonoBehaviour, IInputControllable
     public void SetLogic(LogicEntity logicEntity)
     {
         this.LogicEntity = logicEntity;
-        this.patrolSetup = new AIPatrolSetup(new List<AIPatrolPosition>() { }, new InstantPatrolTimePolicy(), new FixedListedPositionAIPatrolBehaviour(this.LogicEntity, new OrderedPatrolCoordinator(this.LogicEntity)));
+        List<PathNode> randomMapNodes = ManagersService.instace.GetManager<GameMap>().mapManager.GetRandomNodes(new MapNodesRandomRequester<PathNode>(2, new RepeatAllowedRequesterPolicy<PathNode>(), new DistanceBasedFilterZone<PathNode>(this.LogicEntity.ViewEntity, 25)));
+
+        this.patrolSetup = new AIPatrolSetup(new List<AIPatrolPosition>(randomMapNodes.Select(pathNode => new AIPatrolPosition(pathNode)).ToList()), new InstantPatrolTimePolicy(), new FixedListedPositionAIPatrolBehaviour(this.LogicEntity, new OrderedPatrolCoordinator(this.LogicEntity)));
         this.aIBlackboard = new AIBlackboard(this.LogicEntity, new AIBlackboardSetup(patrolSetup));
         this.ThinkActions();
     }
 
     private void Start()
     {
-        this.coroutineManager = CoroutineManager.instance;
+        this.coroutineManager = GameCoroutineManager.instance;
 
         this.ThinkActions();
         this.ResolveAIComponents();
@@ -38,7 +41,7 @@ public class LocalAIInput : MonoBehaviour, IInputControllable
 
     private void ThinkActions()
     {
-        this.aiActionResolver = new DefaultAIActionResolver(this.LogicEntity);
+        this.aiActionResolver = new DefaultAIActionResolver(this.aIBlackboard);
         this.aiThinker = new AIGOAPThinker(this.aIBlackboard, new AIGOAPDecisionTreeThinker(new SimpleAIGoalDecisionTree().GetAIGOAPGoal(this.LogicEntity)));
         this.aiplanResolver = new AIChainPlanResolver(() => this.aiInputFSM.Feed(AIState.Fail));
     }

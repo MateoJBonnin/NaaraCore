@@ -55,7 +55,7 @@ public class AIPatrollingState : FSMState
         SimpleFSMState waitingState = new SimpleFSMState();
         waitingState.OnEnterAction += () =>
         {
-            CoroutineManager.instance.StartCoroutine(this.WaitForNextPatrolStep());
+            GameCoroutineManager.instance.StartCoroutine(this.WaitForNextPatrolStep());
         };
 
         SimpleFSMState interrumpedState = new SimpleFSMState();
@@ -79,6 +79,7 @@ public class AIPatrollingState : FSMState
     private IEnumerator WaitForNextPatrolStep()
     {
         yield return new WaitForSeconds(this.patrolTimePolicy.GetPatrolTimer());
+
         this.patrollingFSM.Feed(AIPatrollingStates.Moving);
     }
 }

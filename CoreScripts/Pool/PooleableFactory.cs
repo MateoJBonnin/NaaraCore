@@ -70,7 +70,7 @@ namespace Pool
 
         private void InitialPool()
         {
-            CoroutineManager.instance.StartCoroutine(this.LazyCreate(PooleableFactory<T>.TIME_SLICING_COUNT, this.StartAmount, (item) =>
+            GameCoroutineManager.instance.StartCoroutine(this.LazyCreate(PooleableFactory<T>.TIME_SLICING_COUNT, this.StartAmount, (item) =>
              {
                  ((IPooleable)item).DisableObject();
                  this.itemQueue.Enqueue(new PooleableObject<T>(item));
