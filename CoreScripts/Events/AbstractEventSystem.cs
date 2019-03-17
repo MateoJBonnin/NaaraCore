@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 public abstract class AbstractEventSystem<T> where T : IEventeable
 {
     protected DictionaryWithListDatabaseStructure<Type, EventContainer> databaseStructure;
 
-    public abstract void Init();
+    public virtual void Init()
+    {
+        this.databaseStructure = new DictionaryWithListDatabaseStructure<Type, EventContainer>();
+    }
 
     public void DispatchEvent(IEventeable gameEvent)
     {
@@ -13,7 +17,9 @@ public abstract class AbstractEventSystem<T> where T : IEventeable
         if (eventContainers == null) return;
 
         for (int i = eventContainers.Count - 1; i >= 0; i--)
+        {
             eventContainers[i].Raise(gameEvent);
+        }
     }
 
     public void AddEventListener<W>(Action<W> eventAction) where W : T, IEventeable

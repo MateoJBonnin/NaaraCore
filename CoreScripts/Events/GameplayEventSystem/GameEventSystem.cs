@@ -8,6 +8,7 @@ public class GameEventSystem : AbstractEventSystem<IGameEvent>
 
     public override void Init()
     {
+        base.Init();
         instance = this;
     }
 }

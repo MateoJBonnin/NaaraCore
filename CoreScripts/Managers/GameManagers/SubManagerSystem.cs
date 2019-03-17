@@ -4,6 +4,7 @@ using Managers;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using MEC;
 
 public class SubManagerSystem<T> where T : SubManager
 {
@@ -41,7 +42,7 @@ public class SubManagerSystem<T> where T : SubManager
 
     public void GetManagerWhenReady<W>(Action<W> onManagerReadyCallback) where W : T
     {
-        GameCoroutineManager.instance.StartCoroutine(this.CheckIfManagerIsReady(onManagerReadyCallback));
+        ApplicationManager.instance.appSystems.GetManager<ApplicationCoroutineManager>().AppCoroutineStarter(this.CheckIfManagerIsReady(onManagerReadyCallback));
     }
 
     public W GetManagerWhenReady<W>() where W : T
@@ -56,10 +57,10 @@ public class SubManagerSystem<T> where T : SubManager
         this.subManagers.Add(entityManager);
     }
 
-    private IEnumerator CheckIfManagerIsReady<W>(Action<W> onManagerReadyCallback) where W : T
+    private IEnumerator<float> CheckIfManagerIsReady<W>(Action<W> onManagerReadyCallback) where W : T
     {
         W manager = default;
-        yield return new WaitUntil(() =>
+        yield return Timing.WaitUntilDone(() =>
         {
             manager = this.GetManager<W>();
 

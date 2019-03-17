@@ -8,6 +8,7 @@ public class ApplicationEventSystem : AbstractEventSystem<IAppEvent>
 
     public override void Init()
     {
+        base.Init();
         instance = this;
     }
 }

@@ -9,11 +9,7 @@ public class NetworkingEventSystem : AbstractEventSystem<INetworkEvent>
 
     public override void Init()
     {
+        base.Init();
         instance = this;
-    }
-
-    internal void AddEventListener<T>()
-    {
-        throw new NotImplementedException();
     }
 }

@@ -17,12 +17,12 @@ public abstract class AbstractViewEntity : MonoBehaviour, IPooleable, INavTarget
 
     public void EnableObject()
     {
-        gameObject.SetActive(true);
+        this.gameObject.SetActive(true);
     }
 
     public void DisableObject()
     {
-        gameObject.SetActive(false);
+        this.gameObject.SetActive(false);
     }
 
     public Vector3 GetPosition()
