@@ -24,7 +24,7 @@ public class LocalAIInput : MonoBehaviour, IInputControllable
     public void SetLogic(LogicEntity logicEntity)
     {
         this.LogicEntity = logicEntity;
-        List<PathNode> randomMapNodes = ManagersService.instace.GetManager<GameMap>().mapManager.GetRandomNodes(new MapNodesRandomRequester<PathNode>(2, new RepeatAllowedRequesterPolicy<PathNode>(), new DistanceBasedFilterZone<PathNode>(this.LogicEntity.ViewEntity, 25)));
+        List<PathNode> randomMapNodes = ManagersService.instace.GetManager<GameMap>().mapManager.GetNodes(new MapNodesRandomRequester<PathNode>(2, new RepeatAllowedRequesterPolicy<PathNode>(), new DistanceBasedFilterZone<PathNode>(this.LogicEntity.ViewEntity, 25)));
 
         this.patrolSetup = new AIPatrolSetup(new List<AIPatrolPosition>(randomMapNodes.Select(pathNode => new AIPatrolPosition(pathNode)).ToList()), new InstantPatrolTimePolicy(), new FixedListedPositionAIPatrolBehaviour(this.LogicEntity, new OrderedPatrolCoordinator(this.LogicEntity)));
         this.aIBlackboard = new AIBlackboard(this.LogicEntity, new AIBlackboardSetup(patrolSetup));

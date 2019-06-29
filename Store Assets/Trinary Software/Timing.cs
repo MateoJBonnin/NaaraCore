@@ -1966,7 +1966,7 @@ namespace MEC
 
         public static float WaitUntilDone(IEnumerator<float> coroutine)
         {
-            return Timing.WaitUntilDone(ApplicationManager.instance.appSystems.GetManagerWhenReady<ApplicationCoroutineManager>().AppCoroutineStarter(coroutine));
+            return Timing.WaitUntilDone(ApplicationManager.instance.appSystems.GetManager<ApplicationCoroutineManager>().AppCoroutineStarter(coroutine));
         }
 
         private static IEnumerator<float> _StartWhenDone(AsyncOperation operation, IEnumerator<float> pausedProc)
@@ -2394,25 +2394,7 @@ namespace MEC
         }
 
         [System.Obsolete("Unity coroutine function, use RunCoroutine instead.", true)]
-        public new Coroutine StartCoroutine(System.Collections.IEnumerator routine) { return null; }
-
-        [System.Obsolete("Unity coroutine function, use RunCoroutine instead.", true)]
-        public new Coroutine StartCoroutine(string methodName, object value) { return null; }
-
-        [System.Obsolete("Unity coroutine function, use RunCoroutine instead.", true)]
-        public new Coroutine StartCoroutine(string methodName) { return null; }
-
-        [System.Obsolete("Unity coroutine function, use RunCoroutine instead.", true)]
         public new Coroutine StartCoroutine_Auto(System.Collections.IEnumerator routine) { return null; }
-
-        [System.Obsolete("Unity coroutine function, use KillCoroutines instead.", true)]
-        public new void StopCoroutine(string methodName) { }
-
-        [System.Obsolete("Unity coroutine function, use KillCoroutines instead.", true)]
-        public new void StopCoroutine(System.Collections.IEnumerator routine) { }
-
-        [System.Obsolete("Unity coroutine function, use KillCoroutines instead.", true)]
-        public new void StopCoroutine(Coroutine routine) { }
 
         [System.Obsolete("Unity coroutine function, use KillCoroutines instead.", true)]
         public new void StopAllCoroutines() { }

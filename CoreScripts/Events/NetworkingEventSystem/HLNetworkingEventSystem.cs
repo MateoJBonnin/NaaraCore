@@ -3,9 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class NetworkingEventSystem : AbstractEventSystem<INetworkEvent>
+public class HLNetworkingEventSystem : SubscriptionBasedEventSystem<HLINetworkEvent>
 {
-    public static NetworkingEventSystem instance;
+    public static HLNetworkingEventSystem instance;
 
     public override void Init()
     {

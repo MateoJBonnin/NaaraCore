@@ -16,6 +16,11 @@ public static class DictionaryExtensions
         return x.Count <= 0;
     }
 
+    public static bool IsEmpty<T>(this Queue<T> x)
+    {
+        return x.Count <= 0;
+    }
+
     public static void RemoveFirst<T>(this List<T> x)
     {
         if (x.Count > 0)

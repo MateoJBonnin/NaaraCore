@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface INetworkEvent : IEventeable
+public abstract class AbstractStateSnapshot
 {
-
 }

@@ -9,8 +9,25 @@ public class GenericFSM<T> where T : Enum
     public AbstractFSMTransitioner<T> FSMTransitioner { get; set; }
     public FSMConfig<T> FSMConfig { get; set; }
     public Action<FSMState, FSMState> OnStateChanged;
-    public FSMState currentState;
-    private T currentTypeState;
+
+    public T GetCurrentType
+    {
+        get
+        {
+            return this.currentType;
+        }
+    }
+
+    public FSMState GetCurrentState
+    {
+        get
+        {
+            return this.currentState;
+        }
+    }
+
+    private FSMState currentState;
+    private T currentType;
 
     public GenericFSM()
     {
@@ -47,7 +64,7 @@ public class GenericFSM<T> where T : Enum
             {
                 this.OnStateChanged?.Invoke(this.currentState, newState);
                 this.currentState?.OnExit();
-                this.currentTypeState = state;
+                this.currentType = state;
                 this.currentState = newState;
                 this.currentState.SetData(data);
                 this.currentState.OnEnter();
@@ -73,10 +90,5 @@ public class GenericFSM<T> where T : Enum
         var invertedStates = this.FSMConfig.statesDatabase.ToDictionary(x => x.Value, x => x.Key);
         invertedStates.TryGetValue(state, out type);
         return type;
-    }
-
-    public T GetCurrentType()
-    {
-        return this.currentTypeState;
     }
 }

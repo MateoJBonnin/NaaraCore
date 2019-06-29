@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class GameEventSystem : AbstractEventSystem<IGameEvent>
+﻿public class GameEventSystem : SubscriptionBasedEventSystem<IGameEvent>
 {
     public static GameEventSystem instance;
 

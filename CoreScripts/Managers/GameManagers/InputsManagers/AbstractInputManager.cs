@@ -7,12 +7,12 @@ namespace Managers
 {
     public class AbstractInputManager<T> : Manager
     {
-        public DictionaryWithListDatabaseStructure<T, Action<JSONObject>> inputsDatabase;
+        public GenericDatabaseStructure<T, Action<JSONObject>> inputsDatabase;
         private List<Action<JSONObject>> emptyJsonList = new List<Action<JSONObject>>();
 
         public AbstractInputManager()
         {
-            this.inputsDatabase = new DictionaryWithListDatabaseStructure<T, Action<JSONObject>>();
+            this.inputsDatabase = new GenericDatabaseStructure<T, Action<JSONObject>>();
         }
 
         public void SubscribeToInput(T inputType, Action<JSONObject> inputAction)

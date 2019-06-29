@@ -58,7 +58,7 @@ namespace Managers
             return this.GetClosestNodeTo(logicEntity.ViewEntity);
         }
 
-        public List<T> GetRandomNodes(AbstractMapNodesRequester<T> mapNodesRequester)
+        public List<T> GetNodes(AbstractMapNodesRequester<T> mapNodesRequester)
         {
             return mapNodesRequester.GetNodes(this.PathNodes);
         }
@@ -70,7 +70,7 @@ namespace Managers
 
         protected virtual T GetNode()
         {
-            T node = this.PathNodePoolFactory.Create();
+            T node = this.PathNodePoolFactory.GetPoolItem();
             node.OnReturnedItem += this.ReturnNode;
             node.transform.SetParent(this.pathNodesParent, true);
             node.EnableObject();

@@ -15,19 +15,12 @@ namespace Factory
             this.getItem = getItem;
         }
 
-        public virtual T Create()
-        {
-            T item = getItem();
-            this.OnItemCreated?.Invoke(item);
-            return item;
-        }
-
         public IEnumerator LazyCreate(int timeSlicingCount, int creationCount, Func<T, T> processItem, Action onComplete)
         {
             int count = 0;
             for (int i = 0; i <= creationCount; i++)
             {
-                processItem(Create());
+                processItem(this.Create());
                 if (count > timeSlicingCount)
                 {
                     count = 0;
@@ -37,6 +30,13 @@ namespace Factory
                     count++;
             }
             onComplete();
+        }
+
+        protected virtual T Create()
+        {
+            T item = getItem();
+            this.OnItemCreated?.Invoke(item);
+            return item;
         }
     }
 }

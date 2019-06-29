@@ -19,7 +19,6 @@ public class SubManagerSystem<T> where T : SubManager
     public SubManagerSystem(List<T> subManagers)
     {
         this.subManagers = new HashSet<T>();
-
         foreach (var manager in subManagers)
             this.SetSubManager(manager);
     }
@@ -42,14 +41,9 @@ public class SubManagerSystem<T> where T : SubManager
 
     public void GetManagerWhenReady<W>(Action<W> onManagerReadyCallback) where W : T
     {
-        ApplicationManager.instance.appSystems.GetManager<ApplicationCoroutineManager>().AppCoroutineStarter(this.CheckIfManagerIsReady(onManagerReadyCallback));
-    }
-
-    public W GetManagerWhenReady<W>() where W : T
-    {
-        W tempManager = default;
-        this.GetManagerWhenReady<W>((manager) => tempManager = manager);
-        return tempManager;
+        //COROUTINES DO NOT START WHEN CALL INSIDE OF AN ANONYMOUS CALL
+        //The submanager system does not uses the application coroutine manager because even that manager has to be loaded by this manager.
+        Timing.RunCoroutine(this.CheckIfManagerIsReady(onManagerReadyCallback));
     }
 
     public void SetSubManager(T entityManager)
@@ -57,33 +51,33 @@ public class SubManagerSystem<T> where T : SubManager
         this.subManagers.Add(entityManager);
     }
 
-    private IEnumerator<float> CheckIfManagerIsReady<W>(Action<W> onManagerReadyCallback) where W : T
-    {
-        W manager = default;
-        yield return Timing.WaitUntilDone(() =>
-        {
-            manager = this.GetManager<W>();
-
-            bool predicate = manager != null;
-
-            if (predicate)
-                onManagerReadyCallback(manager);
-
-            return predicate;
-        });
-
-    }
-
-    private W GetManager<W>() where W : T
+    public W GetManager<W>() where W : T
     {
         W tempManager = default;
+
         IEnumerable<W> wSubManagerList = this.subManagers.Select(subManager => subManager as W);
 
         foreach (W manager in wSubManagerList)
             if (manager is W)
+            {
                 tempManager = manager;
+                return tempManager as W;
+            }
 
         return tempManager as W;
+    }
+
+    private IEnumerator<float> CheckIfManagerIsReady<W>(Action<W> onManagerReadyCallback) where W : T
+    {
+        W manager = default;
+        while (manager == null)
+        {
+            manager = this.GetManager<W>();
+            if (manager != null)
+                onManagerReadyCallback(manager);
+
+            yield return Timing.WaitForOneFrame;
+        }
     }
 
     private void WaitForSubManagersToBeReady()
@@ -95,7 +89,7 @@ public class SubManagerSystem<T> where T : SubManager
     {
         yield return new WaitUntil(() =>
         {
-            return subManagers.All(subManager => subManager.subManagerStateFSM.GetCurrentType() == SubManagerReadyStates.Ready);
+            return subManagers.All(subManager => subManager.subManagerStateFSM.GetCurrentType == SubManagerReadyStates.Ready);
         });
 
         this.OnAllInitialSubManagersReady?.Invoke();

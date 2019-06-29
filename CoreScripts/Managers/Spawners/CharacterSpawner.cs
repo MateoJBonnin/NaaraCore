@@ -32,7 +32,7 @@ public class CharacterSpawner<T> : GameSpawner where T : AbstractViewEntity
 
     public T SpawnCharacter()
     {
-        T character = this.characterFactory.Create();
+        T character = this.characterFactory.GetPoolItem();
         character.OnReturnedItem += ReturnBaseCharacter;
         character.transform.SetParent(null);
         character.EnableObject();

@@ -1,8 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class ApplicationEventSystem : AbstractEventSystem<IAppEvent>
+﻿public class ApplicationEventSystem : SubscriptionBasedEventSystem<IAppEvent>
 {
     public static ApplicationEventSystem instance;
 

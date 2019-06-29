@@ -27,8 +27,8 @@ namespace Pool
 
         public PooleableFactory(Func<T> getItem, int startAmount = 0, Action OnInitPoolFinished = null) : base(getItem)
         {
-            this.unusedQueue = new Queue<PooleableObject<T>>();
-            this.itemQueue = new Queue<PooleableObject<T>>(StartAmount);
+            this.unusedQueue = new Queue<PooleableObject<T>>(startAmount);
+            this.itemQueue = new Queue<PooleableObject<T>>(startAmount);
             this.StartAmount = startAmount;
             this.OnInitPoolFinished += OnInitPoolFinished;
             this.InitialPool();

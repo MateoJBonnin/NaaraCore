@@ -27,13 +27,13 @@ public class RemoteUserInput : NetworkBehaviour, IInputControllable
         this.CmdMove(data[GameInputsManager.X_AXIS_KEY].f, data[GameInputsManager.Z_AXIS_KEY].f);
     }
 
-    [Command]
+    //[Command]
     public void CmdAttack()
     {
         GameEventSystem.instance.DispatchEvent(new EntityInputSentEvent(ActionRequestType.Attack, this.LogicEntity));
     }
 
-    [Command]
+    //[Command]
     public void CmdMove(float xAxis, float zAxis)
     {
         JSONObject moveInputsData = new JSONObject();

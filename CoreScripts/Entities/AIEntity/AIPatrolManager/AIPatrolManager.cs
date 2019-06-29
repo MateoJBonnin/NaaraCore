@@ -20,7 +20,7 @@ public class AIPatrolManager : SubManager
         for (int i = aIBlackboardSetup.patrolSetup.AIPatrolPositions.Count - 1; i >= 0; i--)
             patrolMemoryTracker.RegisterPatrolPosition(new EPatrolPositionTracked(aIBlackboardSetup.patrolSetup.AIPatrolPositions[i], this.aIBlackboard.AILogicEntity));
 
-        this.aIBlackboard.EntityBlackboard.subManagerSystem.GetManagerWhenReady<EntityMemoryManager>().memoryTrackers.SetSubManager(patrolMemoryTracker);
+        this.aIBlackboard.EntityBlackboard.subManagerSystem.GetManagerWhenReady<EntityMemoryManager>((entityMemoryManager) => entityMemoryManager.memoryTrackers.SetSubManager(patrolMemoryTracker));
     }
 
     public void AddPatrolPosition(AIPatrolPosition aIPatrolPosition)

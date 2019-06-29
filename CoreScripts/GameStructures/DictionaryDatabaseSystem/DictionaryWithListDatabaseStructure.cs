@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
-public class DictionaryWithListDatabaseStructure<T, W>
+public class GenericDatabaseStructure<T, W>
 {
     private Dictionary<T, List<W>> database;
 
-    public DictionaryWithListDatabaseStructure()
+    public GenericDatabaseStructure()
     {
         this.database = new Dictionary<T, List<W>>();
     }
@@ -38,6 +39,22 @@ public class DictionaryWithListDatabaseStructure<T, W>
         }
     }
 
+    public void RemoveKeyFrom(T t)
+    {
+        if (!this.database.ContainsKey(t))
+            return;
+
+        this.database.Remove(t);
+    }
+
+    public void ClearAllDataFrom(T t)
+    {
+        if (!this.database.ContainsKey(t))
+            return;
+
+        this.database[t] = new List<W>();
+    }
+
     public W SearchDataByPredicate(T t, Func<W, bool> predicate)
     {
         List<W> data = this.GetData(t);
@@ -61,6 +78,16 @@ public class DictionaryWithListDatabaseStructure<T, W>
         this.database.TryGetValue(t, out data);
 
         return data;
+    }
+
+    public Dictionary<T, List<W>> GetAllData()
+    {
+        return this.database;
+    }
+
+    public bool ContainsAnyData()
+    {
+        return this.database.Count > 0;
     }
 
     public void ClearData()
