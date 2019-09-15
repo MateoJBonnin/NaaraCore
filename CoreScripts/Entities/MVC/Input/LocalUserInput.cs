@@ -1,33 +1,38 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using Managers;
-using UnityEngine;
+﻿using Managers;
 
-public class LocalUserInput : MonoBehaviour, IInputControllable
+public class LocalUserInput : AbstractInputEntity
 {
-    public LogicEntity LogicEntity { get; set; }
-
     private EntityInputsManager gameInputsManager;
 
-    public void Start()
+    public LocalUserInput(AbstractInputController inputController) : base(inputController)
     {
-        this.gameInputsManager = ManagersService.instace.GetManager<EntityInputsManager>();
+        this.gameInputsManager = ManagersService.instance.GetManager<EntityInputsManager>();
         this.gameInputsManager.SubscribeToInput(EntityInputType.Move, Move);
         this.gameInputsManager.SubscribeToInput(EntityInputType.Attack, Attack);
     }
 
-    public void SetLogic(LogicEntity logicEntity)
+    public override void SetLogic(LogicEntity logicEntity)
     {
+        base.SetLogic(logicEntity);
         this.LogicEntity = logicEntity;
     }
 
-    public void Attack(JSONObject data)
+    public override AbstractInputEntityStateSnapshot TempGatherState()
     {
-        GameEventSystem.instance.DispatchEvent(new EntityInputSentEvent(ActionRequestType.Attack, this.LogicEntity));
+        return new LocalUserInputEntityStateSnapshot() { inputController = this.inputController };
     }
 
-    public void Move(JSONObject data)
+    public void Attack(EntityInputData data)
     {
-        GameEventSystem.instance.DispatchEvent(new EntityInputSentEvent(ActionRequestType.Move, this.LogicEntity, data));
+        // GameEventSystem.instance.DispatchEvent(new EntityInputSentEvent(ActionRequestType.Attack, this.LogicEntity));
+    }
+
+    public void Move(EntityInputData data)
+    {
+        // GameEventSystem.instance.DispatchEvent(new EntityInputSentEvent(ActionRequestType.Move, this.LogicEntity, data));
+    }
+
+    public override void UpdateInput()
+    {
     }
 }

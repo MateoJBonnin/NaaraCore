@@ -1,14 +1,15 @@
 ﻿using Managers;
+using MEC;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AIPatrollingState : FSMState
+public class AIPatrollingState : FSMState<EmptyFSMStateData>
 {
     public Action OnPatrollingInterrumped;
 
-    private SimpleFSM<AIPatrollingStates> patrollingFSM;
+    private SimpleFSM<AIPatrollingStates, EmptyFSMStateData> patrollingFSM;
     private AbstractAIPatrolBehaviour aIPatrolBehaviour;
     private AbstractPatrolTimePolicy patrolTimePolicy;
 
@@ -16,7 +17,7 @@ public class AIPatrollingState : FSMState
     {
         this.aIPatrolBehaviour = aIPatrolBehaviour;
         this.patrolTimePolicy = patrolTimePolicy;
-        this.patrollingFSM = new SimpleFSM<AIPatrollingStates>(this.GetAIPatrollingStatesConfig());
+        this.patrollingFSM = new SimpleFSM<AIPatrollingStates, EmptyFSMStateData>(this.GetAIPatrollingStatesConfig());
     }
 
     public override void OnEnter()
@@ -33,9 +34,9 @@ public class AIPatrollingState : FSMState
         this.patrollingFSM.Update();
     }
 
-    private Dictionary<AIPatrollingStates, FSMState> GetAIPatrollingStatesConfig()
+    private Dictionary<AIPatrollingStates, FSMState<EmptyFSMStateData>> GetAIPatrollingStatesConfig()
     {
-        Dictionary<AIPatrollingStates, FSMState> connections = new Dictionary<AIPatrollingStates, FSMState>();
+        Dictionary<AIPatrollingStates, FSMState<EmptyFSMStateData>> connections = new Dictionary<AIPatrollingStates, FSMState<EmptyFSMStateData>>();
         SimpleFSMState movingState = new SimpleFSMState();
         movingState.OnEnterAction += () =>
         {
@@ -55,7 +56,7 @@ public class AIPatrollingState : FSMState
         SimpleFSMState waitingState = new SimpleFSMState();
         waitingState.OnEnterAction += () =>
         {
-            GameCoroutineManager.instance.StartCoroutine(this.WaitForNextPatrolStep());
+            ApplicationManager.instance.appSystems.GetManager<ApplicationCoroutineManager>().AppCoroutineStarter(this.WaitForNextPatrolStep());
         };
 
         SimpleFSMState interrumpedState = new SimpleFSMState();
@@ -76,9 +77,9 @@ public class AIPatrollingState : FSMState
         this.aIPatrolBehaviour.RunPatrolAction();
     }
 
-    private IEnumerator WaitForNextPatrolStep()
+    private IEnumerator<float> WaitForNextPatrolStep()
     {
-        yield return new WaitForSeconds(this.patrolTimePolicy.GetPatrolTimer());
+        yield return Timing.WaitForSeconds(this.patrolTimePolicy.GetPatrolTimer());
 
         this.patrollingFSM.Feed(AIPatrollingStates.Moving);
     }

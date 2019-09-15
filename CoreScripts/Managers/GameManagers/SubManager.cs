@@ -5,12 +5,12 @@ using UnityEngine;
 
 public abstract class SubManager
 {
-    public SimpleFSM<SubManagerReadyStates> subManagerStateFSM;
+    public SimpleFSM<SubManagerReadyStates, EmptyFSMStateData> subManagerStateFSM;
     public Action OnSubManagerReady { get; set; }
 
     public SubManager()
     {
-        this.subManagerStateFSM = new SimpleFSM<SubManagerReadyStates>(this.GetSubManagerReadyConfig());
+        this.subManagerStateFSM = new SimpleFSM<SubManagerReadyStates, EmptyFSMStateData>(this.GetSubManagerReadyConfig());
         this.OnSubManagerReady += () => this.subManagerStateFSM.Feed(SubManagerReadyStates.Ready);
     }
 
@@ -18,9 +18,9 @@ public abstract class SubManager
     {
     }
 
-    private Dictionary<SubManagerReadyStates, FSMState> GetSubManagerReadyConfig()
+    private Dictionary<SubManagerReadyStates, FSMState<EmptyFSMStateData>> GetSubManagerReadyConfig()
     {
-        Dictionary<SubManagerReadyStates, FSMState> connections = new Dictionary<SubManagerReadyStates, FSMState>();
+        Dictionary<SubManagerReadyStates, FSMState<EmptyFSMStateData>> connections = new Dictionary<SubManagerReadyStates, FSMState<EmptyFSMStateData>>();
 
         connections[SubManagerReadyStates.NotReady] = new SimpleFSMState();
         connections[SubManagerReadyStates.Ready] = new SimpleFSMState();

@@ -29,7 +29,7 @@ public class PathNode : MonoBehaviour, INodeable, IPooleable, INavTargeteable
 
     public List<INodeable> GetNeighNodes()
     {
-        List<INodeable> neighNodes = new List<INodeable>(ManagersService.instace.GetManager<GameMap>().mapManager.GetPathNodes());
+        List<INodeable> neighNodes = new List<INodeable>(ManagersService.instance.GetManager<GameMap>().mapManager.GetPathNodes());
         neighNodes = neighNodes
              .Where(n => Vector3.SqrMagnitude(((PathNode)n).transform.position - transform.position) <= connectionsRadius)
              .Where(n => ((PathNode)n) != this)

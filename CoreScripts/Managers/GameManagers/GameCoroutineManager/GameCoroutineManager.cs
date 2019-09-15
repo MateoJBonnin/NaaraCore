@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-namespace Managers
+﻿namespace Managers
 {
-    public class GameCoroutineManager : Manager
+    public class GameCoroutineManager : IManager
     {
         public static GameCoroutineManager instance;
 
@@ -14,12 +9,15 @@ namespace Managers
             instance = this;
         }
 
-        public void Start()
+        public void OnReady()
         {
-            this.OnManagerReady?.Invoke(this);
         }
 
-        public override void Init()
+        public void Setup()
+        {
+        }
+
+        public void UpdateManager()
         {
         }
     }

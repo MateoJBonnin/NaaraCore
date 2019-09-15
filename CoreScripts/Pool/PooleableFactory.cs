@@ -70,15 +70,15 @@ namespace Pool
 
         private void InitialPool()
         {
-            GameCoroutineManager.instance.StartCoroutine(this.LazyCreate(PooleableFactory<T>.TIME_SLICING_COUNT, this.StartAmount, (item) =>
-             {
-                 ((IPooleable)item).DisableObject();
-                 this.itemQueue.Enqueue(new PooleableObject<T>(item));
-                 return item;
-             }, () =>
-             {
-                 this.OnInitPoolFinished?.Invoke();
-             }
+            ApplicationManager.instance.appSystems.GetManager<ApplicationCoroutineManager>().AppCoroutineStarter(this.LazyCreate(PooleableFactory<T>.TIME_SLICING_COUNT, this.StartAmount, (item) =>
+            {
+                ((IPooleable)item).DisableObject();
+                this.itemQueue.Enqueue(new PooleableObject<T>(item));
+                return item;
+            }, () =>
+            {
+                this.OnInitPoolFinished?.Invoke();
+            }
              ));
         }
     }

@@ -1,50 +1,54 @@
 ﻿using Managers;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.Networking;
 
-public class RemoteUserInput : NetworkBehaviour, IInputControllable
+public class RemoteUserInput : AbstractInputEntity
 {
     private EntityInputsManager gameInputsManager;
 
-    public LogicEntity LogicEntity { get; set; }
-
-    public void Start()
+    public RemoteUserInput(AbstractInputController inputController) : base(inputController)
     {
-        this.gameInputsManager = ManagersService.instace.GetManager<EntityInputsManager>();
+        this.gameInputsManager = ManagersService.instance.GetManager<EntityInputsManager>();
         this.gameInputsManager.SubscribeToInput(EntityInputType.Move, Move);
         this.gameInputsManager.SubscribeToInput(EntityInputType.Attack, Attack);
     }
 
-    public void Attack(JSONObject data)
+    public void Attack(EntityInputData data)
     {
         this.CmdAttack();
     }
 
-    public void Move(JSONObject data)
+    public void Move(EntityInputData data)
     {
-        this.CmdMove(data[GameInputsManager.X_AXIS_KEY].f, data[GameInputsManager.Z_AXIS_KEY].f);
+        this.CmdMove(data.xAxis, data.zAxis);
     }
 
     //[Command]
     public void CmdAttack()
     {
-        GameEventSystem.instance.DispatchEvent(new EntityInputSentEvent(ActionRequestType.Attack, this.LogicEntity));
+        //GameEventSystem.instance.DispatchEvent(new EntityInputSentEvent(new ACAttack(), this.LogicEntity));
     }
 
     //[Command]
     public void CmdMove(float xAxis, float zAxis)
     {
-        JSONObject moveInputsData = new JSONObject();
-        moveInputsData.AddField(GameInputsManager.X_AXIS_KEY, xAxis);
-        moveInputsData.AddField(GameInputsManager.Z_AXIS_KEY, zAxis);
-
-        GameEventSystem.instance.DispatchEvent(new EntityInputSentEvent(ActionRequestType.Move, this.LogicEntity, moveInputsData));
+        //EntityInputData moveInputsData = new EntityInputData();
+        //moveInputsData.AddField(GameInputsManager.X_AXIS_KEY, xAxis);
+        //moveInputsData.AddField(GameInputsManager.Z_AXIS_KEY, zAxis);
+        //
+        //GameEventSystem.instance.DispatchEvent(new EntityInputSentEvent(ActionRequestType.Move, this.LogicEntity, moveInputsData));
     }
 
-    public void SetLogic(LogicEntity logicEntity)
+    public override void SetLogic(LogicEntity logicEntity)
     {
+        base.SetLogic(logicEntity);
         this.LogicEntity = logicEntity;
+    }
+
+    public override AbstractInputEntityStateSnapshot TempGatherState()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public override void UpdateInput()
+    {
     }
 }

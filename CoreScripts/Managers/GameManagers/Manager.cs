@@ -1,28 +1,30 @@
 ﻿using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Managers
 {
-    public abstract class Manager : MonoBehaviour
+    public abstract class Manager : MonoBehaviour, IManagerWSubManagerSystem<SubManager>
     {
-        public Action<Manager> OnManagerReady;
+        //public abstract event Action<IManager> OnManagerReady;
 
-        protected SubManagerSystem<SubManager> subManagerSystem;
+        public SubManagerSystem<SubManager> SubManagerSystem { get; set; }
 
-        private GameplayManagersInitializer initializer;
-
-        public void Setup(GameplayManagersInitializer initializer)
+        public virtual void UpdateManager()
         {
-            this.subManagerSystem = new SubManagerSystem<SubManager>();
-            this.subManagerSystem.OnAllInitialSubManagersReady += () => this.OnManagerReady?.Invoke(this);
-
-            this.initializer = initializer;
-            this.initializer.OnAllManagersReady += this.OnAllManagersReady;
+            this.SubManagerSystem = new SubManagerSystem<SubManager>();
+            this.SubManagerSystem.UpdateSubManagers();
         }
 
-        public abstract void Init();
+        public virtual void Setup()
+        {
+            //this.SubManagerSystem.OnAllInitialSubManagersReady += () => this.OnManagerReady?.Invoke(this);
+        }
 
-        protected virtual void OnAllManagersReady(List<Manager> allManagers) { }
+        public abstract void OnReady();
+
+        //private void Update()
+        //{
+        //    this.UpdateManager();
+        //}
     }
 }

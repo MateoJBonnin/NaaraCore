@@ -36,4 +36,9 @@ public abstract class AbstractViewEntity : MonoBehaviour, IPooleable, INavTarget
         return new List<INavTargeteable>();
         // return FindObjectsOfType<MonoBehaviour>().OfType<INavTargeteable>().Where(node => Vector3.Distance(node.GetPosition(), this.transform.position) <= this.closestNodesRadius).ToList();
     }
+
+    public virtual void Reset()
+    {
+        this.OnReturnedItem?.Invoke(this);
+    }
 }

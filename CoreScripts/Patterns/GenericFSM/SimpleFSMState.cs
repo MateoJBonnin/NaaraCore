@@ -1,16 +1,13 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 
-public class SimpleFSMState : FSMState
+public class SimpleFSMState : FSMState<EmptyFSMStateData>
 {
-    public JSONObject backupData;
+    public EmptyFSMStateData backupData;
     public Action OnEnterAction;
     public Action OnUpdateAction;
     public Action OnExitAction;
 
-    public override void SetData(JSONObject data)
+    public override void Feed(EmptyFSMStateData data)
     {
         this.backupData = data;
     }

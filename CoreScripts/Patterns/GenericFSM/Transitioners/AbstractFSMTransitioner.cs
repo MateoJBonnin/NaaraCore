@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public abstract class AbstractFSMTransitioner<T> where T : Enum
+﻿public abstract class AbstractFSMTransitioner<T, W> where W : AbstractFSMData
 {
-    protected FSMConfig<T> AbstractFSMConfig { get; set; }
+    protected FSMConfig<T, W> AbstractFSMConfig { get; set; }
 
-    public AbstractFSMTransitioner(FSMConfig<T> fSMConfig)
+    public AbstractFSMTransitioner(FSMConfig<T, W> fSMConfig)
     {
         this.AbstractFSMConfig = fSMConfig;
     }
 
-    public abstract FSMState TransitionateState(T fromState, T toState);
+    public abstract FSMState<W> TransitionateState(T fromState, T toState);
 }

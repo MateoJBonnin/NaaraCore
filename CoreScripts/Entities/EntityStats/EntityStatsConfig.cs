@@ -1,15 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class EntityStatsConfig
+﻿public class EntityStatsConfig
 {
     public EntityStatsConfig(EPrimaryStats EPrimaryStats, EDerivedStats EDerivedStats, ESubStats ESubStats)
     {
         this.ConfigureEntityStats(EPrimaryStats, EDerivedStats, ESubStats);
     }
 
-    public EntityStatsConfig(JSONObject statsData)
+    public EntityStatsConfig(EntityStatsData statsData)
     {
         this.ConfigureEntityStats(statsData);
     }
@@ -36,14 +32,11 @@ public class EntityStatsConfig
         this.ESubStats = ESubStats;
     }
 
-    public void ConfigureEntityStats(JSONObject statsData)
+    public void ConfigureEntityStats(EntityStatsData statsData)
     {
-        if (statsData.HasField(EntityStats.PRIMARY_STATS))
-            this.EPrimaryStats = new EPrimaryStats(statsData[EntityStats.PRIMARY_STATS]);
-        if (statsData.HasField(EntityStats.DERIVED_STATS))
-            this.EDerivedStats = new EDerivedStats(statsData[EntityStats.DERIVED_STATS]);
-        if (statsData.HasField(EntityStats.SUB_STATS))
-            this.ESubStats = new ESubStats(statsData[EntityStats.SUB_STATS]);
+        this.EPrimaryStats = new EPrimaryStats(statsData.entityPrimaryStatsData);
+        this.EDerivedStats = new EDerivedStats(statsData.entityDerivedStatsData);
+        this.ESubStats = new ESubStats(statsData.entitySubStatsData);
     }
 
     public EPrimaryStats EPrimaryStats { get; set; }

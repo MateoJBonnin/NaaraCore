@@ -19,7 +19,7 @@ public abstract class AbstractAIActionResolver
     {
         Dictionary<Type, List<IAIAction>> aiActionsDatabase = this.FillAIActions();
         List<IAIAction> actionList = new List<IAIAction>();
-        foreach (KeyValuePair<ActionRequestType, FSMState> actionStorage in this.aIBlackboard.AILogicEntity.ActionFSM.FSMConfig.statesDatabase)
+        foreach (KeyValuePair<ActionFSMState, FSMState<EntityFSMStateData>> actionStorage in this.aIBlackboard.AILogicEntity.EntityBlackboard.subManagerSystem.GetManager<EntityActionProcessorManager>().ActionFSM.FSMConfig.statesDatabase)
             actionList.AddRange(aiActionsDatabase[actionStorage.Value.GetType()]);
 
         return actionList;

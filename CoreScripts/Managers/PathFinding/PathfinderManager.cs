@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MEC;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -34,7 +35,7 @@ public class PathfinderManager<T> where T : class
         return thetaPredicate(this.GetAstarPathfind(initialNode, goalNode, predicate, heuristic, expand).Item1);
     }
 
-    public IEnumerator GetLazyAstarPathfind(T initialNode,
+    public IEnumerator<float> GetLazyAstarPathfind(T initialNode,
         T goalNode,
         Func<T, bool> breakPredicate,
         Func<T, T, float> heuristic,
@@ -53,7 +54,7 @@ public class PathfinderManager<T> where T : class
             //yield return this.lazyPathfinder.Current;
             if (stepCount >= stepsAmountByFrame)
             {
-                yield return new WaitForEndOfFrame();
+                yield return Timing.WaitForOneFrame;
                 stepCount = 0;
             }
         }

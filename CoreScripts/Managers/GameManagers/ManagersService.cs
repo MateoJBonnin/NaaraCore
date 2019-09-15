@@ -1,36 +1,45 @@
 ﻿using Managers;
 using System.Collections.Generic;
-using UnityEngine;
 
 public class ManagersService
 {
-    public static ManagersService instace;
+    //FIX THIS ASSAP
+    public static ManagersService instance;
 
-    [SerializeField]
-    private List<Manager> managers;
+    private List<IManager> managers;
 
     public ManagersService()
     {
-        if (instace == null)
-            instace = this;
-
-        this.managers = new List<Manager>();
+        this.managers = new List<IManager>();
+        instance = this;
     }
 
-    public void SubscribeManager(Manager manager)
+    public ManagersService(List<IManager> managers)
+    {
+        this.managers = managers;
+        instance = this;
+    }
+
+    public void SubscribeManager(IManager manager)
     {
         this.managers.Add(manager);
     }
 
-    public void RemoveManager(Manager manager)
+    public void RemoveManager(IManager manager)
     {
         this.managers.Remove(manager);
     }
 
-    public T GetManager<T>() where T : Manager
+    public void UpdateManagers()
     {
-        Manager tempManager = null;
-        foreach (Manager manager in this.managers)
+        for (int i = this.managers.Count - 1; i >= 0; i--)
+            managers[i].UpdateManager();
+    }
+
+    public T GetManager<T>() where T : class, IManager
+    {
+        IManager tempManager = null;
+        foreach (IManager manager in this.managers)
             if (manager is T)
             {
                 tempManager = manager;
@@ -38,5 +47,10 @@ public class ManagersService
             }
 
         return tempManager as T;
+    }
+
+    public List<IManager> GetAllManagers()
+    {
+        return this.managers;
     }
 }

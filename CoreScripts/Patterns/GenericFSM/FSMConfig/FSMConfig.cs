@@ -1,64 +1,53 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using System.Collections.Generic;
 
-public class FSMConfig<T> where T : Enum
+public class FSMConfig<T, W> where W : AbstractFSMData
 {
-    public const string STATE_FROM_KEY = "stateFrom";
-    public const string STATE_TO_KEY = "stateTo";
-
-    public static Dictionary<string, T> TypeNamesToT
-    {
-        get
-        {
-            if (typeNamesToT == null)
-                ConvertTypeToStringName();
-            return typeNamesToT;
-        }
-        private set
-        {
-            typeNamesToT = value;
-        }
-    }
-
-    private static Dictionary<string, T> typeNamesToT;
-
-    public Dictionary<T, List<T>> configTransitions
-    { get; private set; }
-    public Dictionary<T, FSMState> statesDatabase { get; private set; }
+    public Dictionary<T, List<T>> configTransitions { get; private set; }
+    public Dictionary<T, FSMState<W>> statesDatabase { get; private set; }
 
     public FSMConfig()
     {
         this.Init();
     }
 
-    public FSMConfig(JSONObject configData, Dictionary<T, FSMState> statesData)
+    public FSMConfig(FSMStateLinksData<T> configData, Dictionary<T, FSMState<W>> statesData)
     {
         this.Init();
         this.ConfigureStates(statesData);
         this.ConfigureConnections(configData);
     }
 
-    public virtual void ConfigureConnections(JSONObject configData)
+    public void FSMConfigUtil<R>(FSMStateLinksData<T> configData, Dictionary<T, R> statesData) where R : FSMState<W>
     {
-        foreach (JSONObject stateConn in configData.list)
-            this.SetTransition(stringNameToT(stateConn[STATE_FROM_KEY].str), stringNameToT(stateConn[STATE_TO_KEY].str));
+        this.ConfigureStates(statesData);
+        this.ConfigureConnections(configData);
     }
 
-    public virtual void ConfigureStates(Dictionary<T, FSMState> statesData)
+    public virtual void ConfigureConnections(FSMStateLinksData<T> configData)
     {
-        foreach (KeyValuePair<T, FSMState> state in statesData)
+        foreach (FSMStateLink<T> stateConn in configData.linksData)
+            this.SetTransition(stateConn.stateFrom, stateConn.stateTo);
+    }
+
+    public virtual void ConfigureStates(Dictionary<T, FSMState<W>> statesData)
+    {
+        foreach (KeyValuePair<T, FSMState<W>> state in statesData)
+            this.SetState(state.Key, state.Value);
+    }
+
+    public virtual void ConfigureStates<R>(Dictionary<T, R> statesData) where R : FSMState<W>
+    {
+        foreach (KeyValuePair<T, R> state in statesData)
             this.SetState(state.Key, state.Value);
     }
 
     public void Init()
     {
         this.configTransitions = new Dictionary<T, List<T>>();
-        this.statesDatabase = new Dictionary<T, FSMState>();
+        this.statesDatabase = new Dictionary<T, FSMState<W>>();
     }
 
-    public FSMState GetStateFromTransition(T from, T to)
+    public FSMState<W> GetStateFromTransition(T from, T to)
     {
         List<T> possibleStates;
         this.configTransitions.TryGetValue(from, out possibleStates);
@@ -69,14 +58,14 @@ public class FSMConfig<T> where T : Enum
         return null;
     }
 
-    public FSMState GetState(T stateType)
+    public FSMState<W> GetState(T stateType)
     {
-        FSMState state;
+        FSMState<W> state;
         this.statesDatabase.TryGetValue(stateType, out state);
         return state;
     }
 
-    public T GetTypeByState(FSMState stateType)
+    public T GetTypeByState(FSMState<W> stateType)
     {
         foreach (var state in this.statesDatabase)
         {
@@ -87,12 +76,12 @@ public class FSMConfig<T> where T : Enum
         return default(T);
     }
 
-    public void SetState(T stateKey, FSMState fSMState)
+    public void SetState(T stateKey, FSMState<W> fSMState)
     {
         this.statesDatabase[stateKey] = fSMState;
     }
 
-    public void RemoveState(T stateKey, FSMState fSMState)
+    public void RemoveState(T stateKey, FSMState<W> fSMState)
     {
         this.statesDatabase.Remove(stateKey);
     }
@@ -121,23 +110,9 @@ public class FSMConfig<T> where T : Enum
         }
     }
 
-    public static JSONObject StateToConfig(T from, T to)
+    public static FSMStateLink<T> StateToConfig(T from, T to)
     {
-        JSONObject config = new JSONObject();
-        config.AddField(STATE_FROM_KEY, from.ToString());
-        config.AddField(STATE_TO_KEY, to.ToString());
+        FSMStateLink<T> config = new FSMStateLink<T>(from, to);
         return config;
-    }
-
-    public static T stringNameToT(string name)
-    {
-        return TypeNamesToT[name];
-    }
-
-    private static void ConvertTypeToStringName()
-    {
-        typeNamesToT = new Dictionary<string, T>();
-        foreach (object type in Enum.GetValues(typeof(T)))
-            typeNamesToT[type.ToString()] = (T)type;
     }
 }

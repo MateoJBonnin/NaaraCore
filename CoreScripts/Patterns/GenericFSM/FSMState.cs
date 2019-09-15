@@ -1,11 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class FSMState
+﻿public class FSMState<T> where T : AbstractFSMData
 {
-    public FSMState sourceState;
-    public virtual void SetData(JSONObject data) { }
+    public FSMState<T> sourceState;
+    public virtual void Feed(T data) { }
     public virtual void OnEnter() { }
     public virtual void OnUpdate() { }
     public virtual void OnExit() { }

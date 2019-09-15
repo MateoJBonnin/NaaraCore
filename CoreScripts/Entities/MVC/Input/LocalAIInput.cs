@@ -4,13 +4,10 @@ using UnityEngine;
 using Managers;
 using System.Linq;
 
-public class LocalAIInput : MonoBehaviour, IInputControllable
+public class LocalAIInput : AbstractInputEntity
 {
-    public LogicEntity LogicEntity { get; set; }
-
-    private Dictionary<AIState, Func<FSMState>> entityDefaultTypeToAction;
-    private GenericFSM<AIState> aiInputFSM { get; set; }
-    private GameCoroutineManager coroutineManager;
+    private Dictionary<AIState, Func<FSMState<EmptyFSMStateData>>> entityDefaultTypeToAction;
+    private GenericFSM<AIState, EmptyFSMStateData> aiInputFSM { get; set; }
     private AIBlackboard aIBlackboard;
 
     //TODO: check this, this may come from who initialices the AI, because it will be hardcodedfor now
@@ -21,22 +18,31 @@ public class LocalAIInput : MonoBehaviour, IInputControllable
     private AIPatrolSetup patrolSetup;
     //
 
-    public void SetLogic(LogicEntity logicEntity)
+    public LocalAIInput(AbstractInputController inputController) : base(inputController)
     {
-        this.LogicEntity = logicEntity;
-        List<PathNode> randomMapNodes = ManagersService.instace.GetManager<GameMap>().mapManager.GetNodes(new MapNodesRandomRequester<PathNode>(2, new RepeatAllowedRequesterPolicy<PathNode>(), new DistanceBasedFilterZone<PathNode>(this.LogicEntity.ViewEntity, 25)));
+    }
+
+    public override void SetLogic(LogicEntity logicEntity)
+    {
+        base.SetLogic(logicEntity);
+        List<PathNode> randomMapNodes = ManagersService.instance.GetManager<GameMap>().mapManager.GetNodes(new MapNodesRandomRequester<PathNode>(2, new RepeatAllowedRequesterPolicy<PathNode>(), new DistanceBasedFilterZone<PathNode>(this.LogicEntity.ViewEntity, 25)));
 
         this.patrolSetup = new AIPatrolSetup(new List<AIPatrolPosition>(randomMapNodes.Select(pathNode => new AIPatrolPosition(pathNode)).ToList()), new InstantPatrolTimePolicy(), new FixedListedPositionAIPatrolBehaviour(this.LogicEntity, new OrderedPatrolCoordinator(this.LogicEntity)));
         this.aIBlackboard = new AIBlackboard(this.LogicEntity, new AIBlackboardSetup(patrolSetup));
         this.ThinkActions();
+        this.ResolveAIComponents();
     }
 
-    private void Start()
+    public override AbstractInputEntityStateSnapshot TempGatherState()
     {
-        this.coroutineManager = GameCoroutineManager.instance;
+        return new LocalAIInputEntityStateSnapshot();
+    }
 
-        this.ThinkActions();
-        this.ResolveAIComponents();
+    public override void UpdateInput()
+    {
+        this.aiplanResolver.UpdatePlan();
+        this.aiInputFSM?.Update();
+        this.aIBlackboard.UpdateAIBackboard();
     }
 
     private void ThinkActions()
@@ -69,7 +75,7 @@ public class LocalAIInput : MonoBehaviour, IInputControllable
         failedState.OnEnterAction += () =>
         {
             //if formulating the plan failed look for another plan or add / change actions. 
-            this.StopAllCoroutines();
+            //this.StopAllCoroutines();
             this.aiInputFSM.Feed(AIState.Idle);
         };
 
@@ -97,44 +103,36 @@ public class LocalAIInput : MonoBehaviour, IInputControllable
 
     private void ResolveAIComponents()
     {
-        this.entityDefaultTypeToAction = new Dictionary<AIState, Func<FSMState>>();
+        this.entityDefaultTypeToAction = new Dictionary<AIState, Func<FSMState<EmptyFSMStateData>>>();
         this.SetConfigConnectionStates();
-        FSMConfig<AIState> AIStateConfig = new FSMConfig<AIState>(this.GetAIFSMConfigData(), this.GetAIPlanStates());
-        this.aiInputFSM = new GenericFSM<AIState>(AIStateConfig, new FSMRestrictedTransitioner<AIState>(AIStateConfig));
+        FSMConfig<AIState, EmptyFSMStateData> AIStateConfig = new FSMConfig<AIState, EmptyFSMStateData>(this.GetAIFSMConfigData(), this.GetAIPlanStates());
+        this.aiInputFSM = new GenericFSM<AIState, EmptyFSMStateData>(AIStateConfig, new FSMRestrictedTransitioner<AIState, EmptyFSMStateData>(AIStateConfig));
         this.aiInputFSM.Feed(AIState.Idle);
     }
 
-    private JSONObject GetAIFSMConfigData()
+    private FSMStateLinksData<AIState> GetAIFSMConfigData()
     {
-        JSONObject configData = new JSONObject();
+        FSMStateLinksData<AIState> configData = new FSMStateLinksData<AIState>();
 
-        configData.Add(FSMConfig<AIState>.StateToConfig(AIState.Idle, AIState.Idle));
-        configData.Add(FSMConfig<AIState>.StateToConfig(AIState.Idle, AIState.Resolve));
-        configData.Add(FSMConfig<AIState>.StateToConfig(AIState.Resolve, AIState.Fail));
-        configData.Add(FSMConfig<AIState>.StateToConfig(AIState.Fail, AIState.Idle));
-        configData.Add(FSMConfig<AIState>.StateToConfig(AIState.Fail, AIState.Resolve));
-        configData.Add(FSMConfig<AIState>.StateToConfig(AIState.Resolve, AIState.Executing));
-        configData.Add(FSMConfig<AIState>.StateToConfig(AIState.Executing, AIState.Finished));
+        configData.Add(FSMConfig<AIState, EmptyFSMStateData>.StateToConfig(AIState.Idle, AIState.Idle));
+        configData.Add(FSMConfig<AIState, EmptyFSMStateData>.StateToConfig(AIState.Idle, AIState.Resolve));
+        configData.Add(FSMConfig<AIState, EmptyFSMStateData>.StateToConfig(AIState.Resolve, AIState.Fail));
+        configData.Add(FSMConfig<AIState, EmptyFSMStateData>.StateToConfig(AIState.Fail, AIState.Idle));
+        configData.Add(FSMConfig<AIState, EmptyFSMStateData>.StateToConfig(AIState.Fail, AIState.Resolve));
+        configData.Add(FSMConfig<AIState, EmptyFSMStateData>.StateToConfig(AIState.Resolve, AIState.Executing));
+        configData.Add(FSMConfig<AIState, EmptyFSMStateData>.StateToConfig(AIState.Executing, AIState.Finished));
 
         return configData;
     }
 
-    private Dictionary<AIState, FSMState> GetAIPlanStates()
+    private Dictionary<AIState, FSMState<EmptyFSMStateData>> GetAIPlanStates()
     {
-        Dictionary<AIState, FSMState> entityActions = new Dictionary<AIState, FSMState>();
+        Dictionary<AIState, FSMState<EmptyFSMStateData>> entityActions = new Dictionary<AIState, FSMState<EmptyFSMStateData>>();
 
         for (int i = 0, count = (int)AIState.Count; i < count; i++)
             entityActions[(AIState)i] = this.entityDefaultTypeToAction[(AIState)i]();
 
         return entityActions;
-    }
-
-    private void Update()
-    {
-        this.LogicEntity.Update();
-        this.aiplanResolver.UpdatePlan();
-        this.aiInputFSM?.Update();
-        this.aIBlackboard.UpdateAIBackboard();
     }
 }
 

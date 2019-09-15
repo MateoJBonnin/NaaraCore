@@ -25,17 +25,18 @@ public class CharacterSpawner<T> : GameSpawner where T : AbstractViewEntity
         this.charactersPrefabPath = charactersPrefabPath;
         this.SetDictionary();
         if (createInitPool)
-            this.characterFactory = new PooleableFactory<T>(CreateCharacter, this.OnInitialPoolFinished);
+            this.characterFactory = new PooleableFactory<T>(this.CreateCharacter, this.OnInitialPoolFinished);
         else
-            this.characterFactory = new PooleableFactory<T>(CreateCharacter, 0, this.OnInitialPoolFinished);
+            this.characterFactory = new PooleableFactory<T>(this.CreateCharacter, 0, this.OnInitialPoolFinished);
     }
 
     public T SpawnCharacter()
     {
         T character = this.characterFactory.GetPoolItem();
-        character.OnReturnedItem += ReturnBaseCharacter;
+        character.OnReturnedItem += this.ReturnBaseCharacter;
         character.transform.SetParent(null);
         character.EnableObject();
+        GameEventSystem.instance.DispatchEvent(new ViewSpawnedEntityEvent() { viewEntity = character });
         return character;
     }
 
@@ -48,16 +49,15 @@ public class CharacterSpawner<T> : GameSpawner where T : AbstractViewEntity
     {
         T character = (GameObject.Instantiate<T>((Resources.Load<T>(this.characterPath))));
         character.transform.SetParent(this.container);
-        character.OnReturnedItem += ReturnBaseCharacter;
         character.DisableObject();
         return character;
     }
 
     private void ReturnBaseCharacter(IPooleable character)
     {
-        Transform characterTransform = (Transform)character;
+        Transform characterTransform = ((AbstractViewEntity)character).transform;
         characterTransform.SetParent(this.container);
-        character.OnReturnedItem -= ReturnBaseCharacter;
+        character.OnReturnedItem -= this.ReturnBaseCharacter;
         character.DisableObject();
         this.characterFactory.ReturnPoolItem((T)character);
     }

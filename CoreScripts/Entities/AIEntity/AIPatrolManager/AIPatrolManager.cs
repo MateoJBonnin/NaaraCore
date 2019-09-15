@@ -8,19 +8,19 @@ public class AIPatrolManager : SubManager
     public Action OnPatrolInterrumped;
 
     private AIBlackboard aIBlackboard;
-    private SimpleFSM<AIPatrolState> aiPatrolFSM;
+    private SimpleFSM<AIPatrolState, EmptyFSMStateData> aiPatrolFSM;
     private MEntityPatrolPositionsTracker patrolMemoryTracker;
 
     public AIPatrolManager(AIBlackboard aIBlackboard, AIBlackboardSetup aIBlackboardSetup)
     {
         this.aIBlackboard = aIBlackboard;
-        this.aiPatrolFSM = new SimpleFSM<AIPatrolState>(this.GetAIPatrollingStatesConfig());
+        this.aiPatrolFSM = new SimpleFSM<AIPatrolState, EmptyFSMStateData>(this.GetAIPatrollingStatesConfig());
 
         patrolMemoryTracker = new MEntityPatrolPositionsTracker(this.aIBlackboard.AILogicEntity);
         for (int i = aIBlackboardSetup.patrolSetup.AIPatrolPositions.Count - 1; i >= 0; i--)
             patrolMemoryTracker.RegisterPatrolPosition(new EPatrolPositionTracked(aIBlackboardSetup.patrolSetup.AIPatrolPositions[i], this.aIBlackboard.AILogicEntity));
 
-        this.aIBlackboard.EntityBlackboard.subManagerSystem.GetManagerWhenReady<EntityMemoryManager>((entityMemoryManager) => entityMemoryManager.memoryTrackers.SetSubManager(patrolMemoryTracker));
+        this.aIBlackboard.EntityBlackboard.subManagerSystem.GetManagerWhenReady<EntityMemoryManager>((entityMemoryManager) => entityMemoryManager.memoryTrackers.RegisterSubManager(patrolMemoryTracker));
     }
 
     public void AddPatrolPosition(AIPatrolPosition aIPatrolPosition)
@@ -44,9 +44,9 @@ public class AIPatrolManager : SubManager
         this.aiPatrolFSM.Update();
     }
 
-    private Dictionary<AIPatrolState, FSMState> GetAIPatrollingStatesConfig()
+    private Dictionary<AIPatrolState, FSMState<EmptyFSMStateData>> GetAIPatrollingStatesConfig()
     {
-        Dictionary<AIPatrolState, FSMState> connections = new Dictionary<AIPatrolState, FSMState>();
+        Dictionary<AIPatrolState, FSMState<EmptyFSMStateData>> connections = new Dictionary<AIPatrolState, FSMState<EmptyFSMStateData>>();
 
         AIPatrollingState patrollingState = new AIPatrollingState(this.aIBlackboard.AIBlackboardSetup.patrolSetup.aIPatrolBehaviour, this.aIBlackboard.AIBlackboardSetup.patrolSetup.patrolTimePolicy);
         patrollingState.OnPatrollingInterrumped += () => this.aiPatrolFSM.Feed(AIPatrolState.Interrumped);

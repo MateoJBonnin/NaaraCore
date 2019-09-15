@@ -1,15 +1,12 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 
-public class FSMBlockedTransitioner<T> : AbstractFSMTransitioner<T> where T : Enum
+public class FSMBlockedTransitioner<T, W> : AbstractFSMTransitioner<T, W> where T : Enum where W : AbstractFSMData
 {
-    public FSMBlockedTransitioner(FSMConfig<T> fSMConfig) : base(fSMConfig)
+    public FSMBlockedTransitioner(FSMConfig<T, W> fSMConfig) : base(fSMConfig)
     {
     }
 
-    public override FSMState TransitionateState(T fromState, T toState)
+    public override FSMState<W> TransitionateState(T fromState, T toState)
     {
         return null;
     }

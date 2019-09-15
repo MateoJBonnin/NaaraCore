@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using MEC;
 
 namespace Factory
 {
@@ -15,7 +16,7 @@ namespace Factory
             this.getItem = getItem;
         }
 
-        public IEnumerator LazyCreate(int timeSlicingCount, int creationCount, Func<T, T> processItem, Action onComplete)
+        public IEnumerator<float> LazyCreate(int timeSlicingCount, int creationCount, Func<T, T> processItem, Action onComplete)
         {
             int count = 0;
             for (int i = 0; i <= creationCount; i++)
@@ -24,7 +25,7 @@ namespace Factory
                 if (count > timeSlicingCount)
                 {
                     count = 0;
-                    yield return new WaitForEndOfFrame();
+                    yield return Timing.WaitForOneFrame;
                 }
                 else
                     count++;

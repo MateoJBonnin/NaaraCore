@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
 public abstract class AbstractAIPlanResolver
 {
-    protected Dictionary<AIPlanState, Func<FSMState>> entityDefaultTypeToAction;
-    protected GenericFSM<AIPlanState> aiPlanFSM { get; set; }
+    protected Dictionary<AIPlanState, Func<FSMState<EmptyFSMStateData>>> entityDefaultTypeToAction;
+    protected GenericFSM<AIPlanState, EmptyFSMStateData> aiPlanFSM { get; set; }
     protected Action OnActionInterrumped;
 
     protected SimpleFSMState idleState = new SimpleFSMState();
@@ -22,8 +20,8 @@ public abstract class AbstractAIPlanResolver
         this.OnActionInterrumped = onActionInterrumped;
 
         this.SetConfigConnectionStates();
-        FSMConfig<AIPlanState> aiPlanFSMConfig = new FSMConfig<AIPlanState>(JSONObject.arr, this.GetAIPlanStates());
-        this.aiPlanFSM = new GenericFSM<AIPlanState>(aiPlanFSMConfig, new FSMForcedTransitioner<AIPlanState>(aiPlanFSMConfig));
+        FSMConfig<AIPlanState, EmptyFSMStateData> aiPlanFSMConfig = new FSMConfig<AIPlanState, EmptyFSMStateData>(new FSMStateLinksData<AIPlanState>(), this.GetAIPlanStates());
+        this.aiPlanFSM = new GenericFSM<AIPlanState, EmptyFSMStateData>(aiPlanFSMConfig, new FSMForcedTransitioner<AIPlanState, EmptyFSMStateData>(aiPlanFSMConfig));
         this.aiPlanFSM.Feed(AIPlanState.Idle);
     }
 
@@ -32,7 +30,7 @@ public abstract class AbstractAIPlanResolver
 
     private void SetConfigConnectionStates()
     {
-        this.entityDefaultTypeToAction = new Dictionary<AIPlanState, Func<FSMState>>();
+        this.entityDefaultTypeToAction = new Dictionary<AIPlanState, Func<FSMState<EmptyFSMStateData>>>();
         this.entityDefaultTypeToAction[AIPlanState.Idle] = () => this.idleState;
         this.entityDefaultTypeToAction[AIPlanState.StepInterrupted] = () => this.stepInterruptedState;
         this.entityDefaultTypeToAction[AIPlanState.AddStepAfter] = () => this.addStepAfterState;
@@ -41,9 +39,9 @@ public abstract class AbstractAIPlanResolver
         this.entityDefaultTypeToAction[AIPlanState.Finish] = () => this.finishState;
     }
 
-    private Dictionary<AIPlanState, FSMState> GetAIPlanStates()
+    private Dictionary<AIPlanState, FSMState<EmptyFSMStateData>> GetAIPlanStates()
     {
-        Dictionary<AIPlanState, FSMState> entityActions = new Dictionary<AIPlanState, FSMState>();
+        Dictionary<AIPlanState, FSMState<EmptyFSMStateData>> entityActions = new Dictionary<AIPlanState, FSMState<EmptyFSMStateData>>();
 
         for (int i = 0, count = (int)AIPlanState.Count; i < count; i++)
             entityActions[(AIPlanState)i] = this.entityDefaultTypeToAction[(AIPlanState)i]();

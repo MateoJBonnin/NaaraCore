@@ -20,7 +20,7 @@ public class SubManagerSystem<T> where T : SubManager
     {
         this.subManagers = new HashSet<T>();
         foreach (var manager in subManagers)
-            this.SetSubManager(manager);
+            this.RegisterSubManager(manager);
     }
 
     public void OnAllInitSubManagersAdded()
@@ -46,7 +46,7 @@ public class SubManagerSystem<T> where T : SubManager
         Timing.RunCoroutine(this.CheckIfManagerIsReady(onManagerReadyCallback));
     }
 
-    public void SetSubManager(T entityManager)
+    public void RegisterSubManager(T entityManager)
     {
         this.subManagers.Add(entityManager);
     }
@@ -82,12 +82,12 @@ public class SubManagerSystem<T> where T : SubManager
 
     private void WaitForSubManagersToBeReady()
     {
-        GameCoroutineManager.instance.StartCoroutine(this.CheckIfAllSubManagersAreReady());
+        ApplicationManager.instance.appSystems.GetManager<ApplicationCoroutineManager>().AppCoroutineStarter(this.CheckIfAllSubManagersAreReady());
     }
 
-    private IEnumerator CheckIfAllSubManagersAreReady()
+    private IEnumerator<float> CheckIfAllSubManagersAreReady()
     {
-        yield return new WaitUntil(() =>
+        yield return Timing.WaitUntilDone(() =>
         {
             return subManagers.All(subManager => subManager.subManagerStateFSM.GetCurrentType == SubManagerReadyStates.Ready);
         });
