@@ -20,7 +20,7 @@ public abstract class AbstractAIPlanResolver
         this.OnActionInterrumped = onActionInterrumped;
 
         this.SetConfigConnectionStates();
-        FSMConfig<AIPlanState, EmptyFSMStateData> aiPlanFSMConfig = new FSMConfig<AIPlanState, EmptyFSMStateData>(new FSMStateLinksData<AIPlanState>(), this.GetAIPlanStates());
+        DefaultFSMTransitionsConfig<AIPlanState, EmptyFSMStateData> aiPlanFSMConfig = new DefaultFSMTransitionsConfig<AIPlanState, EmptyFSMStateData>(new FSMStateLinksData<AIPlanState>(), this.GetAIPlanStates());
         this.aiPlanFSM = new GenericFSM<AIPlanState, EmptyFSMStateData>(aiPlanFSMConfig, new FSMForcedTransitioner<AIPlanState, EmptyFSMStateData>(aiPlanFSMConfig));
         this.aiPlanFSM.Feed(AIPlanState.Idle);
     }

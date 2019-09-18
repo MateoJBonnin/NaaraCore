@@ -23,9 +23,9 @@ public class LogicEntityFactory
         //TODO: FIX THIS DO NOT CONFIG, THIS IS FOR THE MANAGER, HERE YOU SHOULD CONFIGURE ALL THE ENTITY MANAGERS AND THEN EVERY MANAGER SHOULD BE ABLE T OCONFIGURE
         GenericFSM<ActionRequestType, EntityFSMStateData> entityFSM = new GenericFSM<ActionRequestType, EntityFSMStateData>();
 
-        EntityFSMConfig entityFSMConfig = this.GetEntityConfig(logicEntity, logicScriptable, this.GetEntityDefaultStates(logicScriptable));
+        EntityFSMDatabase entityFSMConfig = this.GetEntityConfig(logicEntity, logicScriptable, this.GetEntityDefaultStates(logicScriptable));
         entityFSM.SetConfig(entityFSMConfig);
-        entityFSM.SetTransitioner(new FSMRestrictedTransitioner<ActionRequestType, EntityFSMStateData>(entityFSMConfig));
+        entityFSM.SetFSMTransitioner(new FSMRestrictedTransitioner<ActionRequestType, EntityFSMStateData>(entityFSMConfig));
 
         return logicEntity;
     }
@@ -43,7 +43,7 @@ public class LogicEntityFactory
         return data;
     }
 
-    private EntityFSMConfig GetEntityConfig(LogicEntity logicEntity, EntityLogicBlueprintScriptable logicScriptable, Dictionary<ActionRequestType, FSMState<EntityFSMStateData>> statesData)
+    private EntityFSMDatabase GetEntityConfig(LogicEntity logicEntity, EntityLogicBlueprintScriptable logicScriptable, Dictionary<ActionRequestType, FSMState<EntityFSMStateData>> statesData)
     {
         List<FSMStateLink<ActionRequestType>> logicFSMStateLinks = new List<FSMStateLink<ActionRequestType>>();
 
@@ -58,6 +58,6 @@ public class LogicEntityFactory
         }
 
         FSMStateLinksData<ActionRequestType> data = new FSMStateLinksData<ActionRequestType>(logicFSMStateLinks);
-        return new EntityFSMConfig(logicEntity, data, statesData);
+        return new EntityFSMDatabase(logicEntity, data, statesData);
     }
 }

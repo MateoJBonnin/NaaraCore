@@ -105,7 +105,7 @@ public class LocalAIInput : AbstractInputEntity
     {
         this.entityDefaultTypeToAction = new Dictionary<AIState, Func<FSMState<EmptyFSMStateData>>>();
         this.SetConfigConnectionStates();
-        FSMConfig<AIState, EmptyFSMStateData> AIStateConfig = new FSMConfig<AIState, EmptyFSMStateData>(this.GetAIFSMConfigData(), this.GetAIPlanStates());
+        DefaultFSMTransitionsConfig<AIState, EmptyFSMStateData> AIStateConfig = new DefaultFSMTransitionsConfig<AIState, EmptyFSMStateData>(this.GetAIFSMConfigData(), this.GetAIPlanStates());
         this.aiInputFSM = new GenericFSM<AIState, EmptyFSMStateData>(AIStateConfig, new FSMRestrictedTransitioner<AIState, EmptyFSMStateData>(AIStateConfig));
         this.aiInputFSM.Feed(AIState.Idle);
     }
@@ -114,13 +114,13 @@ public class LocalAIInput : AbstractInputEntity
     {
         FSMStateLinksData<AIState> configData = new FSMStateLinksData<AIState>();
 
-        configData.Add(FSMConfig<AIState, EmptyFSMStateData>.StateToConfig(AIState.Idle, AIState.Idle));
-        configData.Add(FSMConfig<AIState, EmptyFSMStateData>.StateToConfig(AIState.Idle, AIState.Resolve));
-        configData.Add(FSMConfig<AIState, EmptyFSMStateData>.StateToConfig(AIState.Resolve, AIState.Fail));
-        configData.Add(FSMConfig<AIState, EmptyFSMStateData>.StateToConfig(AIState.Fail, AIState.Idle));
-        configData.Add(FSMConfig<AIState, EmptyFSMStateData>.StateToConfig(AIState.Fail, AIState.Resolve));
-        configData.Add(FSMConfig<AIState, EmptyFSMStateData>.StateToConfig(AIState.Resolve, AIState.Executing));
-        configData.Add(FSMConfig<AIState, EmptyFSMStateData>.StateToConfig(AIState.Executing, AIState.Finished));
+        configData.Add(DefaultFSMTransitionsConfig<AIState, EmptyFSMStateData>.StateToConfig(AIState.Idle, AIState.Idle));
+        configData.Add(DefaultFSMTransitionsConfig<AIState, EmptyFSMStateData>.StateToConfig(AIState.Idle, AIState.Resolve));
+        configData.Add(DefaultFSMTransitionsConfig<AIState, EmptyFSMStateData>.StateToConfig(AIState.Resolve, AIState.Fail));
+        configData.Add(DefaultFSMTransitionsConfig<AIState, EmptyFSMStateData>.StateToConfig(AIState.Fail, AIState.Idle));
+        configData.Add(DefaultFSMTransitionsConfig<AIState, EmptyFSMStateData>.StateToConfig(AIState.Fail, AIState.Resolve));
+        configData.Add(DefaultFSMTransitionsConfig<AIState, EmptyFSMStateData>.StateToConfig(AIState.Resolve, AIState.Executing));
+        configData.Add(DefaultFSMTransitionsConfig<AIState, EmptyFSMStateData>.StateToConfig(AIState.Executing, AIState.Finished));
 
         return configData;
     }
