@@ -4,7 +4,7 @@ using System.Collections.Generic;
 public abstract class AbstractAIPlanResolver
 {
     protected Dictionary<AIPlanState, Func<FSMState<EmptyFSMStateData>>> entityDefaultTypeToAction;
-    protected GenericFSM<AIPlanState, EmptyFSMStateData> aiPlanFSM { get; set; }
+    protected EmptySimpleFSM<AIPlanState> aiPlanFSM { get; set; }
     protected Action OnActionInterrumped;
 
     protected SimpleFSMState idleState = new SimpleFSMState();
@@ -20,8 +20,8 @@ public abstract class AbstractAIPlanResolver
         this.OnActionInterrumped = onActionInterrumped;
 
         this.SetConfigConnectionStates();
-        DefaultFSMTransitionsConfig<AIPlanState, EmptyFSMStateData> aiPlanFSMConfig = new DefaultFSMTransitionsConfig<AIPlanState, EmptyFSMStateData>(new FSMStateLinksData<AIPlanState>(), this.GetAIPlanStates());
-        this.aiPlanFSM = new GenericFSM<AIPlanState, EmptyFSMStateData>(aiPlanFSMConfig, new FSMForcedTransitioner<AIPlanState, EmptyFSMStateData>(aiPlanFSMConfig));
+        EmptyFSMStateDatabase<AIPlanState> aiPlanDatabase = new EmptyFSMStateDatabase<AIPlanState>(this.GetAIPlanStates());
+        this.aiPlanFSM = new EmptySimpleFSM<AIPlanState>(aiPlanDatabase);
         this.aiPlanFSM.Feed(AIPlanState.Idle);
     }
 

@@ -1,24 +1,12 @@
 ﻿namespace Managers
 {
-    public class GameCoroutineManager : IManager
+    public class GameCoroutineManager : AutoInitManager
     {
         public static GameCoroutineManager instance;
 
         public void Awake()
         {
             instance = this;
-        }
-
-        public void OnReady()
-        {
-        }
-
-        public void Setup()
-        {
-        }
-
-        public void UpdateManager()
-        {
         }
     }
 }

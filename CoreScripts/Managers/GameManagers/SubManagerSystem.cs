@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections;
-using Managers;
-using System.Collections.Generic;
-using UnityEngine;
-using System.Linq;
+﻿using Managers;
 using MEC;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
-public class SubManagerSystem<T> where T : SubManager
+public class SubManagerSystem<T> where T : class, Manager
 {
     public Action OnAllInitialSubManagersReady;
 
@@ -19,19 +17,22 @@ public class SubManagerSystem<T> where T : SubManager
     public SubManagerSystem(List<T> subManagers)
     {
         this.subManagers = new HashSet<T>();
-        foreach (var manager in subManagers)
+        foreach (T manager in subManagers)
             this.RegisterSubManager(manager);
+
+        this.CheckSubManagersState();
     }
 
-    public void OnAllInitSubManagersAdded()
+    public void InitAllManagers()
     {
-        this.WaitForSubManagersToBeReady();
+        foreach (T manager in subManagers)
+            manager.Setup();
     }
 
     public void UpdateSubManagers()
     {
         foreach (T subManager in subManagers)
-            subManager.UpdateSubManager();
+            subManager.UpdateManager();
     }
 
     public List<T> GetAllSubManagers()
@@ -39,7 +40,7 @@ public class SubManagerSystem<T> where T : SubManager
         return this.subManagers.ToList();
     }
 
-    public void GetManagerWhenReady<W>(Action<W> onManagerReadyCallback) where W : T
+    public void GetManagerWhenReady<W>(Action<W> onManagerReadyCallback) where W : class, T
     {
         //COROUTINES DO NOT START WHEN CALL INSIDE OF AN ANONYMOUS CALL
         //The submanager system does not uses the application coroutine manager because even that manager has to be loaded by this manager.
@@ -51,7 +52,7 @@ public class SubManagerSystem<T> where T : SubManager
         this.subManagers.Add(entityManager);
     }
 
-    public W GetManager<W>() where W : T
+    public W GetManager<W>() where W : class, T
     {
         W tempManager = default;
 
@@ -67,7 +68,7 @@ public class SubManagerSystem<T> where T : SubManager
         return tempManager as W;
     }
 
-    private IEnumerator<float> CheckIfManagerIsReady<W>(Action<W> onManagerReadyCallback) where W : T
+    private IEnumerator<float> CheckIfManagerIsReady<W>(Action<W> onManagerReadyCallback) where W : class, T
     {
         W manager = default;
         while (manager == null)
@@ -80,16 +81,16 @@ public class SubManagerSystem<T> where T : SubManager
         }
     }
 
-    private void WaitForSubManagersToBeReady()
+    private void CheckSubManagersState()
     {
-        ApplicationManager.instance.appSystems.GetManager<ApplicationCoroutineManager>().AppCoroutineStarter(this.CheckIfAllSubManagersAreReady());
+        Timing.RunCoroutine(this.CheckIfAllSubManagersAreReady());
     }
 
     private IEnumerator<float> CheckIfAllSubManagersAreReady()
     {
         yield return Timing.WaitUntilDone(() =>
         {
-            return subManagers.All(subManager => subManager.subManagerStateFSM.GetCurrentType == SubManagerReadyStates.Ready);
+            return subManagers.All(subManager => subManager.GetState == ManagerReadyStates.Ready);
         });
 
         this.OnAllInitialSubManagersReady?.Invoke();

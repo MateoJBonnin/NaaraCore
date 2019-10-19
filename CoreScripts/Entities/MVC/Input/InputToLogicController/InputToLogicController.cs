@@ -2,7 +2,6 @@
 {
     public InputToLogicController()
     {
-        //TODO: MAYBE TEMPORAL
         this.EnableController();
     }
 
@@ -19,6 +18,6 @@
     public void ProcessInputEvent(EntityInputSentEvent entityInputSentEvent)
     {
         if (this.LogicEntity.Equals(entityInputSentEvent.LogicEntity))
-            this.LogicEntity.EntityBlackboard.subManagerSystem.GetManager<EntityActionProcessorManager>().ProcessAction(new SimpleEntityActionProcess(null, new EntityFSMStateData(entityInputSentEvent.ActionData)));
+            this.LogicEntity.EntityBlackboard.subManagerSystem.GetManager<EntityActionProcessorManager>().ProcessAction(new SimpleEntityActionProcess(entityInputSentEvent.ActionType, new EntityFSMStateData(entityInputSentEvent.ActionData)));
     }
 }

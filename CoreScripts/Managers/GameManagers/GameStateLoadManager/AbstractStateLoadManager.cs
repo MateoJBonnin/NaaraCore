@@ -1,4 +1,4 @@
-﻿public abstract class AbstractStateLoadManager : SubManager
+﻿public abstract class AbstractStateLoadManager : AutoInitManager
 {
     public abstract void Load(StateSnapshot stateSnapshot);
 }

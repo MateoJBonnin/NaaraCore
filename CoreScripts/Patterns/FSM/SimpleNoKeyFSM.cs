@@ -1,18 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class SimpleNoKeyFSM : SimpleFSM
+﻿public class SimpleNoKeyFSM<T> : SimpleFSM<FSMState<T>, T> where T : AbstractFSMData
 {
-    // Start is called before the first frame update
-    void Start()
+    public SimpleNoKeyFSM(AbstractFSMStateDatabase<FSMState<T>, T> fSMStateDatabase) : base(fSMStateDatabase)
     {
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
     }
 }

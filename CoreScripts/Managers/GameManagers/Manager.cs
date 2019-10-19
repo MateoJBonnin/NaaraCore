@@ -1,30 +1,10 @@
-﻿using System;
-using UnityEngine;
-
-namespace Managers
+﻿namespace Managers
 {
-    public abstract class Manager : MonoBehaviour, IManagerWSubManagerSystem<SubManager>
+    public interface Manager
     {
-        //public abstract event Action<IManager> OnManagerReady;
-
-        public SubManagerSystem<SubManager> SubManagerSystem { get; set; }
-
-        public virtual void UpdateManager()
-        {
-            this.SubManagerSystem = new SubManagerSystem<SubManager>();
-            this.SubManagerSystem.UpdateSubManagers();
-        }
-
-        public virtual void Setup()
-        {
-            //this.SubManagerSystem.OnAllInitialSubManagersReady += () => this.OnManagerReady?.Invoke(this);
-        }
-
-        public abstract void OnReady();
-
-        //private void Update()
-        //{
-        //    this.UpdateManager();
-        //}
+        ManagerReadyStates GetState { get; }
+        void Setup();
+        void OnReady();
+        void UpdateManager();
     }
 }

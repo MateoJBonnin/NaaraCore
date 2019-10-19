@@ -1,6 +1,4 @@
-﻿using System;
-
-public class FSMRestrictedTransitioner<T, W> : AbstractFSMTransitioner<T, W> where T : Enum where W : AbstractFSMData
+﻿public class FSMRestrictedTransitioner<T, W> : AbstractFSMTransitioner<T, W> where W : AbstractFSMData
 {
     protected AbstractFSMTransitionsConfig<T, W> abstractFSMConfig;
 

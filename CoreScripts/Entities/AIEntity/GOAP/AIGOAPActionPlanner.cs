@@ -10,11 +10,11 @@ public class AIGOAPActionPlanner
 
     private PathfinderManager<AIWorldState> worldStatePathfinder;
     private float planFailTimer;
-    private AIBlackboard blackboard;
+    private LocalAIInput aiInput;
 
-    public AIGOAPActionPlanner(AIBlackboard blackboard, float planFailTimer = PLAN_FAIL_DEFAULT_TIMER)
+    public AIGOAPActionPlanner(LocalAIInput aiInput, float planFailTimer = PLAN_FAIL_DEFAULT_TIMER)
     {
-        this.blackboard = blackboard;
+        this.aiInput = aiInput;
         this.worldStatePathfinder = new PathfinderManager<AIWorldState>();
         this.planFailTimer = planFailTimer;
     }
@@ -59,7 +59,7 @@ public class AIGOAPActionPlanner
     private AIWorldState GetInitialWorldState()
     {
         AIWorldState aIWorldState = new AIWorldState();
-        aIWorldState.RegisterSymbol(new WSSLogicSelf(this.blackboard.AILogicEntity));
+        aIWorldState.RegisterSymbol(new WSSLogicSelf(this.aiInput.AILogicEntity));
         return aIWorldState;
     }
 }

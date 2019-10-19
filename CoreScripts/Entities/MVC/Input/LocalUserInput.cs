@@ -1,20 +1,23 @@
 ﻿using Managers;
+using System.Collections.Generic;
 
-public class LocalUserInput : AbstractInputEntity
+public class LocalUserInput : AbstractUserInput
 {
-    private EntityInputsManager gameInputsManager;
-
-    public LocalUserInput(AbstractInputController inputController) : base(inputController)
+    public LocalUserInput(AbstractInputController inputController, List<EntityInputLink> entityInputLinks, List<LocalUserInputContextData> localUserInputContextDatas) : base(inputController, entityInputLinks)
     {
-        this.gameInputsManager = ManagersService.instance.GetManager<EntityInputsManager>();
-        this.gameInputsManager.SubscribeToInput(EntityInputType.Move, Move);
-        this.gameInputsManager.SubscribeToInput(EntityInputType.Attack, Attack);
+        GameInputsManager gameInputsManager = ManagersService.instance.GetManager<GameInputsManager>();
+
+        for (int i = localUserInputContextDatas.Count - 1; i >= 0; i--)
+            for (int j = localUserInputContextDatas[i].abstractEntityInputTriggers.Count - 1; j >= 0; j--)
+            {
+                AbstractEntityInputTrigger entityInputTrigger = localUserInputContextDatas[i].abstractEntityInputTriggers[j];
+                gameInputsManager.SubscribeToInput(localUserInputContextDatas[i].abstractGameInputTrigger, (GameInputData data) => TriggerInput(data, entityInputTrigger));
+            }
     }
 
     public override void SetLogic(LogicEntity logicEntity)
     {
         base.SetLogic(logicEntity);
-        this.LogicEntity = logicEntity;
     }
 
     public override AbstractInputEntityStateSnapshot TempGatherState()
@@ -22,17 +25,12 @@ public class LocalUserInput : AbstractInputEntity
         return new LocalUserInputEntityStateSnapshot() { inputController = this.inputController };
     }
 
-    public void Attack(EntityInputData data)
-    {
-        // GameEventSystem.instance.DispatchEvent(new EntityInputSentEvent(ActionRequestType.Attack, this.LogicEntity));
-    }
-
-    public void Move(EntityInputData data)
-    {
-        // GameEventSystem.instance.DispatchEvent(new EntityInputSentEvent(ActionRequestType.Move, this.LogicEntity, data));
-    }
-
     public override void UpdateInput()
     {
+    }
+
+    private void TriggerInput(GameInputData data, AbstractEntityInputTrigger entityInputTrigger)
+    {
+        this.entityInputsManager.TriggerInput(entityInputTrigger, new EntityInputData(data));
     }
 }

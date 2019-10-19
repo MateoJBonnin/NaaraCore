@@ -3,27 +3,18 @@ using System.Collections.Generic;
 
 public abstract class AbstractAIActionResolver
 {
-    protected AIBlackboard aIBlackboard;
+    public abstract List<IAIAction> GetAvailableActions();
+    //protected abstract GenericDatabaseStructure<FSMState<EntityFSMStateData>, IAIAction> FillAIActions();
 
-    public AbstractAIActionResolver(AIBlackboard aIBlackboard)
-    {
-        this.aIBlackboard = aIBlackboard;
-    }
-
-    public List<IAIAction> GetAvailableActions()
-    {
-        return this.GetActionsBasedOnEntity();
-    }
-
-    private List<IAIAction> GetActionsBasedOnEntity()
-    {
-        Dictionary<Type, List<IAIAction>> aiActionsDatabase = this.FillAIActions();
-        List<IAIAction> actionList = new List<IAIAction>();
-        foreach (KeyValuePair<ActionFSMState, FSMState<EntityFSMStateData>> actionStorage in this.aIBlackboard.AILogicEntity.EntityBlackboard.subManagerSystem.GetManager<EntityActionProcessorManager>().ActionFSM.FSMConfig.statesDatabase)
-            actionList.AddRange(aiActionsDatabase[actionStorage.Value.GetType()]);
-
-        return actionList;
-    }
-
-    protected abstract Dictionary<Type, List<IAIAction>> FillAIActions();
+    //private List<IAIAction> GetActionsBasedOnEntity()
+    //{
+    //    GenericDatabaseStructure<FSMState<EntityFSMStateData>, IAIAction> aiActionsDatabase = this.FillAIActions();
+    //    List<IAIAction> actionList = new List<IAIAction>();
+    //    List<FSMState<EntityFSMStateData>> allActionTypes = this.aIBlackboard.AILogicEntity.EntityBlackboard.subManagerSystem.GetManager<EntityActionProcessorManager>().ActionFSM.FSMStateDatabase.GetAllTypes();
+    //
+    //    for (int i = allActionTypes.Count - 1; i >= 0; i--)
+    //        actionList.AddRange(aiActionsDatabase.GetData(allActionTypes[i]));
+    //
+    //    return actionList;
+    //}
 }

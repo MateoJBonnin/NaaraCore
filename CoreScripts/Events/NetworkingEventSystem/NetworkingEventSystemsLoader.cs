@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class NetworkingEventSystemsLoader : AppManagaer
+public class NetworkingEventSystemsLoader : AppManager
 {
     private LLNetworkingEventSystem lLNetworkingEventSystem;
     private HLNetworkingEventSystem hLNetworkingEventSystem;

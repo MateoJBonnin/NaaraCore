@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-public abstract class AbstractEntityTrackerManager<T> : SubManager
+public abstract class AbstractEntityTrackerManager<T> : AutoInitManager
 {
     public Dictionary<T, LogicEntity> entityToLogicData;
     protected List<T> allEntities;

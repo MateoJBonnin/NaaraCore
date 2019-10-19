@@ -21,6 +21,12 @@ public class DefaultFSMStateDatabase<T, W> : AbstractFSMStateDatabase<T, W> wher
             this.SetState(state.Key, state.Value);
     }
 
+    public override void ConfigureStates<R>(Dictionary<T, R> statesData)
+    {
+        foreach (KeyValuePair<T, R> state in statesData)
+            this.SetState(state.Key, state.Value);
+    }
+
     public override void SetState(T stateKey, FSMState<W> fSMState)
     {
         this.StatesDatabase[stateKey] = fSMState;
@@ -49,13 +55,18 @@ public class DefaultFSMStateDatabase<T, W> : AbstractFSMStateDatabase<T, W> wher
         return default(T);
     }
 
+    public override bool ContainsState(T stateKey)
+    {
+        return this.GetStateByType(stateKey) != null;
+    }
+
     public override List<FSMState<W>> GetAllStates()
     {
         return this.StatesDatabase.Values.ToList();
     }
 
-    public override bool ContainsState(T stateKey)
+    public override List<T> GetAllTypes()
     {
-        return this.GetStateByType(stateKey) != null;
+        return this.StatesDatabase.Keys.ToList();
     }
 }

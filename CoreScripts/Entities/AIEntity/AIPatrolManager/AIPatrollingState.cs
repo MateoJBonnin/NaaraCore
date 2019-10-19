@@ -1,15 +1,12 @@
-﻿using Managers;
-using MEC;
+﻿using MEC;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
-public class AIPatrollingState : FSMState<EmptyFSMStateData>
+public class AIPatrollingState : EmptyFSMState
 {
     public Action OnPatrollingInterrumped;
 
-    private SimpleFSM<AIPatrollingStates, EmptyFSMStateData> patrollingFSM;
+    private EmptySimpleFSM<AIPatrollingStates> patrollingFSM;
     private AbstractAIPatrolBehaviour aIPatrolBehaviour;
     private AbstractPatrolTimePolicy patrolTimePolicy;
 
@@ -17,7 +14,7 @@ public class AIPatrollingState : FSMState<EmptyFSMStateData>
     {
         this.aIPatrolBehaviour = aIPatrolBehaviour;
         this.patrolTimePolicy = patrolTimePolicy;
-        this.patrollingFSM = new SimpleFSM<AIPatrollingStates, EmptyFSMStateData>(this.GetAIPatrollingStatesConfig());
+        this.patrollingFSM = new EmptySimpleFSM<AIPatrollingStates>(new EmptyFSMStateDatabase<AIPatrollingStates>(this.GetAIPatrollingStatesConfig()));
     }
 
     public override void OnEnter()
@@ -41,10 +38,7 @@ public class AIPatrollingState : FSMState<EmptyFSMStateData>
         movingState.OnEnterAction += () =>
         {
             this.aIPatrolBehaviour.OnPatrolInterrumped += () => this.patrollingFSM.Feed(AIPatrollingStates.Interrumped);
-            this.aIPatrolBehaviour.OnPatrolSpotReached += () =>
-            {
-                this.patrollingFSM.Feed(AIPatrollingStates.Waiting);
-            };
+            this.aIPatrolBehaviour.OnPatrolSpotReached += () => this.patrollingFSM.Feed(AIPatrollingStates.Waiting);
 
             this.GetToNextPatrolSpot();
         };

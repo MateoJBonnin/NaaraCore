@@ -13,6 +13,11 @@ public class GenericDatabaseStructure<T, W>
         this.database = new Dictionary<T, List<W>>();
     }
 
+    public GenericDatabaseStructure(Dictionary<T, List<W>> database)
+    {
+        this.database = database;
+    }
+
     public void RegisterData(T t, W w)
     {
         List<W> tempWList = new List<W>();

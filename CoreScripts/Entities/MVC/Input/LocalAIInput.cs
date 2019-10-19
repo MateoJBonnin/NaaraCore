@@ -6,29 +6,40 @@ using System.Linq;
 
 public class LocalAIInput : AbstractInputEntity
 {
+    public LogicEntity AILogicEntity { get; private set; }
+    public AIBlackboard aIBlackboard;
+
     private Dictionary<AIState, Func<FSMState<EmptyFSMStateData>>> entityDefaultTypeToAction;
     private GenericFSM<AIState, EmptyFSMStateData> aiInputFSM { get; set; }
-    private AIBlackboard aIBlackboard;
 
     //TODO: check this, this may come from who initialices the AI, because it will be hardcodedfor now
+    private AbstractAIActionResolver aiActionResolver;
     private AbstractAIPlanResolver aiplanResolver;
-    private DefaultAIActionResolver aiActionResolver;
     private AbstractAIThinker aiThinker;
+
+
     //change this to be called upon use only
-    private AIPatrolSetup patrolSetup;
+    //private AIPatrolSetup patrolSetup;
     //
 
-    public LocalAIInput(AbstractInputController inputController) : base(inputController)
+    public LocalAIInput(AbstractInputController inputController, List<EntityInputLink> entityInputLinks, List<AIManager> managers) : base(inputController, entityInputLinks)
     {
+        //TODO FIX THIS??
+        this.AILogicEntity = inputController.LogicEntity;
+        this.aIBlackboard = new AIBlackboard();
+
+        for (int i = managers.Count - 1; i >= 0; i--)
+            this.aIBlackboard.subManagerSystem.RegisterSubManager(managers[i]);
     }
 
     public override void SetLogic(LogicEntity logicEntity)
     {
         base.SetLogic(logicEntity);
-        List<PathNode> randomMapNodes = ManagersService.instance.GetManager<GameMap>().mapManager.GetNodes(new MapNodesRandomRequester<PathNode>(2, new RepeatAllowedRequesterPolicy<PathNode>(), new DistanceBasedFilterZone<PathNode>(this.LogicEntity.ViewEntity, 25)));
+        List<PathNode> randomMapNodes = ManagersService.instance.GetManager<GameMap>().mapManager.GetNodes(new MapNodesRandomRequester<PathNode>(2, new RepeatAllowedRequesterPolicy<PathNode>(), new DistanceBasedFilterZone<PathNode>(this.inputController.LogicEntity.ViewEntity, 25)));
 
-        this.patrolSetup = new AIPatrolSetup(new List<AIPatrolPosition>(randomMapNodes.Select(pathNode => new AIPatrolPosition(pathNode)).ToList()), new InstantPatrolTimePolicy(), new FixedListedPositionAIPatrolBehaviour(this.LogicEntity, new OrderedPatrolCoordinator(this.LogicEntity)));
-        this.aIBlackboard = new AIBlackboard(this.LogicEntity, new AIBlackboardSetup(patrolSetup));
+        //TODO FIX THIS MAYBE THE PATROL CONTEXT CAN HAVE A PATROL SETUP
+        //this.patrolSetup = new AIPatrolSetup(new List<AIPatrolPosition>(randomMapNodes.Select(pathNode => new AIPatrolPosition(pathNode)).ToList()), new InstantPatrolTimePolicy(), new FixedListedPositionAIPatrolBehaviour(this.inputController.LogicEntity, new OrderedPatrolCoordinator(this.inputController.LogicEntity)));
+        //this.inputController.LogicEntity, new AIBlackboardSetup(patrolSetup));
         this.ThinkActions();
         this.ResolveAIComponents();
     }
@@ -40,15 +51,15 @@ public class LocalAIInput : AbstractInputEntity
 
     public override void UpdateInput()
     {
+        this.aIBlackboard.UpdateAIBackboard();
         this.aiplanResolver.UpdatePlan();
         this.aiInputFSM?.Update();
-        this.aIBlackboard.UpdateAIBackboard();
     }
 
     private void ThinkActions()
     {
-        this.aiActionResolver = new DefaultAIActionResolver(this.aIBlackboard);
-        this.aiThinker = new AIGOAPThinker(this.aIBlackboard, new AIGOAPDecisionTreeThinker(new SimpleAIGoalDecisionTree().GetAIGOAPGoal(this.LogicEntity)));
+        //this.aiActionResolver = new DefaultAIActionResolver(this.aIBlackboard);
+        this.aiThinker = new AIGOAPThinker(this, new AIGOAPDecisionTreeThinker(new SimpleAIGoalDecisionTree().GetAIGOAPGoal(this.inputController.LogicEntity)));
         this.aiplanResolver = new AIChainPlanResolver(() => this.aiInputFSM.Feed(AIState.Fail));
     }
 
@@ -105,8 +116,8 @@ public class LocalAIInput : AbstractInputEntity
     {
         this.entityDefaultTypeToAction = new Dictionary<AIState, Func<FSMState<EmptyFSMStateData>>>();
         this.SetConfigConnectionStates();
-        DefaultFSMTransitionsConfig<AIState, EmptyFSMStateData> AIStateConfig = new DefaultFSMTransitionsConfig<AIState, EmptyFSMStateData>(this.GetAIFSMConfigData(), this.GetAIPlanStates());
-        this.aiInputFSM = new GenericFSM<AIState, EmptyFSMStateData>(AIStateConfig, new FSMRestrictedTransitioner<AIState, EmptyFSMStateData>(AIStateConfig));
+        EmptyFSMStateDatabase<AIState> aiStateDatabase = new EmptyFSMStateDatabase<AIState>(this.GetAIPlanStates());
+        this.aiInputFSM = new EmptyGenericFSM<AIState>(aiStateDatabase, new FSMRestrictedTransitioner<AIState, EmptyFSMStateData>(new EmptyFSMTransitionsConfig<AIState>(this.GetAIFSMConfigData(), aiStateDatabase)));
         this.aiInputFSM.Feed(AIState.Idle);
     }
 

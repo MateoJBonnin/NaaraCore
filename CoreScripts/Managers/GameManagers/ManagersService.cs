@@ -6,51 +6,37 @@ public class ManagersService
     //FIX THIS ASSAP
     public static ManagersService instance;
 
-    private List<IManager> managers;
+    public SubManagerSystem<Manager> managers;
 
-    public ManagersService()
+    public ManagersService() : this(new List<Manager>())
     {
-        this.managers = new List<IManager>();
+    }
+
+    public ManagersService(List<Manager> managers)
+    {
         instance = this;
-    }
-
-    public ManagersService(List<IManager> managers)
-    {
-        this.managers = managers;
-        instance = this;
-    }
-
-    public void SubscribeManager(IManager manager)
-    {
-        this.managers.Add(manager);
-    }
-
-    public void RemoveManager(IManager manager)
-    {
-        this.managers.Remove(manager);
+        this.managers = new SubManagerSystem<Manager>();
+        for (int i = managers.Count - 1; i >= 0; i--)
+            this.managers.RegisterSubManager(managers[i]);
     }
 
     public void UpdateManagers()
     {
-        for (int i = this.managers.Count - 1; i >= 0; i--)
-            managers[i].UpdateManager();
+        this.managers.UpdateSubManagers();
     }
 
-    public T GetManager<T>() where T : class, IManager
+    public T GetManager<T>() where T : DefaultManager
     {
-        IManager tempManager = null;
-        foreach (IManager manager in this.managers)
-            if (manager is T)
-            {
-                tempManager = manager;
-                break;
-            }
-
-        return tempManager as T;
+        return this.managers.GetManager<T>();
     }
 
-    public List<IManager> GetAllManagers()
+    public void SubscribeManager(Manager manager)
     {
-        return this.managers;
+        this.managers.RegisterSubManager(manager);
+    }
+
+    public List<Manager> GetAllManagers()
+    {
+        return this.managers.GetAllSubManagers();
     }
 }

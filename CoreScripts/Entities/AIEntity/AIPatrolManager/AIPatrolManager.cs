@@ -3,29 +3,32 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AIPatrolManager : SubManager
+public class AIPatrolManager : AIManager
 {
     public Action OnPatrolInterrumped;
 
-    private AIBlackboard aIBlackboard;
-    private SimpleFSM<AIPatrolState, EmptyFSMStateData> aiPatrolFSM;
+    private EmptySimpleFSM<AIPatrolState> aiPatrolFSM;
     private MEntityPatrolPositionsTracker patrolMemoryTracker;
 
-    public AIPatrolManager(AIBlackboard aIBlackboard, AIBlackboardSetup aIBlackboardSetup)
+    public AIPatrolManager()
     {
-        this.aIBlackboard = aIBlackboard;
-        this.aiPatrolFSM = new SimpleFSM<AIPatrolState, EmptyFSMStateData>(this.GetAIPatrollingStatesConfig());
+        this.aiPatrolFSM = new EmptySimpleFSM<AIPatrolState>(new EmptyFSMStateDatabase<AIPatrolState>(this.GetAIPatrollingStatesConfig()));
+        this.patrolMemoryTracker = new MEntityPatrolPositionsTracker(this.aiInput.AILogicEntity);
 
-        patrolMemoryTracker = new MEntityPatrolPositionsTracker(this.aIBlackboard.AILogicEntity);
-        for (int i = aIBlackboardSetup.patrolSetup.AIPatrolPositions.Count - 1; i >= 0; i--)
-            patrolMemoryTracker.RegisterPatrolPosition(new EPatrolPositionTracked(aIBlackboardSetup.patrolSetup.AIPatrolPositions[i], this.aIBlackboard.AILogicEntity));
+        //TODO: FIX THIS
+        //for (int i = aIBlackboardSetup.patrolSetup.AIPatrolPositions.Count - 1; i >= 0; i--)
+        //    this.patrolMemoryTracker.RegisterPatrolPosition(new EPatrolPositionTracked(aIBlackboardSetup.patrolSetup.AIPatrolPositions[i], this.aiInput.aIBlackboard.AILogicEntity));
 
-        this.aIBlackboard.EntityBlackboard.subManagerSystem.GetManagerWhenReady<EntityMemoryManager>((entityMemoryManager) => entityMemoryManager.memoryTrackers.RegisterSubManager(patrolMemoryTracker));
+        this.aiInput.AILogicEntity.EntityBlackboard.subManagerSystem.GetManagerWhenReady<EntityMemoryManager>((entityMemoryManager) => entityMemoryManager.memoryTrackers.RegisterSubManager(this.patrolMemoryTracker));
+    }
+
+    public AIPatrolManager(LocalAIInput aiInput) : base(aiInput)
+    {
     }
 
     public void AddPatrolPosition(AIPatrolPosition aIPatrolPosition)
     {
-        this.patrolMemoryTracker.RegisterPatrolPosition(new EPatrolPositionTracked(aIPatrolPosition, this.aIBlackboard.AILogicEntity));
+        this.patrolMemoryTracker.RegisterPatrolPosition(new EPatrolPositionTracked(aIPatrolPosition, this.aiInput.AILogicEntity));
     }
 
     public void RemovePatrolPosition(AIPatrolPosition aIPatrolPosition)
@@ -38,9 +41,9 @@ public class AIPatrolManager : SubManager
         this.aiPatrolFSM.Feed(AIPatrolState.Patrolling);
     }
 
-    public override void UpdateSubManager()
+    public override void UpdateManager()
     {
-        base.UpdateSubManager();
+        base.UpdateManager();
         this.aiPatrolFSM.Update();
     }
 
@@ -48,7 +51,8 @@ public class AIPatrolManager : SubManager
     {
         Dictionary<AIPatrolState, FSMState<EmptyFSMStateData>> connections = new Dictionary<AIPatrolState, FSMState<EmptyFSMStateData>>();
 
-        AIPatrollingState patrollingState = new AIPatrollingState(this.aIBlackboard.AIBlackboardSetup.patrolSetup.aIPatrolBehaviour, this.aIBlackboard.AIBlackboardSetup.patrolSetup.patrolTimePolicy);
+        //TODO: FIX THIS MAYBE USE SCRIPTABLE OBJECTS
+        AIPatrollingState patrollingState = new AIPatrollingState(null, null);//TODO:FIX THIS this.aiInput.AIBlackboardSetup.patrolSetup.aIPatrolBehaviour, this.aiInput.aIBlackboard.AIBlackboardSetup.patrolSetup.patrolTimePolicy);
         patrollingState.OnPatrollingInterrumped += () => this.aiPatrolFSM.Feed(AIPatrolState.Interrumped);
 
         SimpleFSMState interrumpedState = new SimpleFSMState();

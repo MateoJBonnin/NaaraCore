@@ -1,9 +1,7 @@
-﻿using System.Collections;
+﻿using Factory;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
-using System;
-using Factory;
-using Managers;
 
 namespace Pool
 {
