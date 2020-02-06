@@ -1,11 +1,14 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class LocalMemoryStateDeserializer : AbstractLocalStateDeserializer
+﻿public class LocalMemoryStateDeserializer<T> : AbstractLocalStateDeserializer<T> where T : StateSnapshot
 {
-    public override StateSnapshot DeserializeState()
+    private T cachedState;
+
+    public LocalMemoryStateDeserializer(T cachedState)
     {
-        throw new System.NotImplementedException();
+        this.cachedState = cachedState;
+    }
+
+    public override T DeserializeState()
+    {
+        return this.cachedState;
     }
 }

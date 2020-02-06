@@ -15,6 +15,10 @@ public abstract class AbstractFSM<T, W> where W : AbstractFSMData
         FSMTransitioner = fSMTransitioner;
     }
 
+    public AbstractFSM()
+    {
+    }
+
     public virtual void SetFSMTransitioner(AbstractFSMTransitioner<T, W> abstractFSMTransitioner)
     {
         this.FSMTransitioner = abstractFSMTransitioner;
@@ -26,4 +30,32 @@ public abstract class AbstractFSM<T, W> where W : AbstractFSMData
     }
 
     public abstract void Feed(T state, W data = null);
+}
+
+public abstract class AbstractFSMCustom<Database, Transitioner, State, Key, Data> where Data : AbstractFSMData where State : FSMState<Data> where Database : AbstractFSMStateDatabaseCustomState<State, Key, Data> where Transitioner : AbstractFSMTransitionerCustomState<State, Key, Data>
+{
+    public abstract event Action<State, State> OnStateChanged;
+
+    public Transitioner FSMTransitioner { get; protected set; }
+    public Database FSMStateDatabase { get; protected set; }
+    public State GetCurrentState { get; protected set; }
+    public Key GetCurrentType { get; protected set; }
+
+    public AbstractFSMCustom(Database fSMStateDatabase, Transitioner fSMTransitioner)
+    {
+        FSMStateDatabase = fSMStateDatabase;
+        FSMTransitioner = fSMTransitioner;
+    }
+
+    public virtual void SetFSMTransitioner(Transitioner abstractFSMTransitioner)
+    {
+        this.FSMTransitioner = abstractFSMTransitioner;
+    }
+
+    public virtual void SetStateDatabase(Database abstractFSMStateDatabase)
+    {
+        this.FSMStateDatabase = abstractFSMStateDatabase;
+    }
+
+    public abstract void Feed(Key state, Data data = null);
 }

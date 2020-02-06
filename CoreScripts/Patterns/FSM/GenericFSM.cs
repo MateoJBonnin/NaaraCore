@@ -1,19 +1,29 @@
 ﻿using System;
 
-public class GenericFSM<T, W> : AbstractFSM<T, W> where W : AbstractFSMData
+public class GenericFSM<Key, Data> : GenericFSMCustomState<AbstractFSMStateDatabase<Key, Data>, AbstractFSMTransitioner<Key, Data>, FSMState<Data>, Key, Data> where Data : AbstractFSMData
 {
-    public override event Action<FSMState<W>, FSMState<W>> OnStateChanged;
+    public override event Action<FSMState<Data>, FSMState<Data>> OnStateChanged;
 
-    public GenericFSM(AbstractFSMStateDatabase<T, W> fSMStateDatabase, AbstractFSMTransitioner<T, W> fSMTransitioner) :
+    public GenericFSM(AbstractFSMStateDatabase<Key, Data> fSMStateDatabase, AbstractFSMTransitioner<Key, Data> fSMTransitioner) :
         base(fSMStateDatabase, fSMTransitioner)
     {
     }
+}
 
-    public override void Feed(T state, W data = null)
+public class GenericFSMCustomState<Database, Transitioner, State, Key, Data> : AbstractFSMCustom<Database, Transitioner, State, Key, Data> where Data : AbstractFSMData where State : FSMState<Data> where Database : AbstractFSMStateDatabaseCustomState<State, Key, Data> where Transitioner : AbstractFSMTransitionerCustomState<State, Key, Data>
+{
+    public override event Action<State, State> OnStateChanged;
+
+    public GenericFSMCustomState(Database database, Transitioner transitioner) :
+        base(database, transitioner)
+    {
+    }
+
+    public override void Feed(Key state, Data data = null)
     {
         if (this.FSMStateDatabase.ContainsState(state))
         {
-            FSMState<W> newState = null;
+            State newState = null;
             if (this.GetCurrentState == null)
                 newState = this.FSMStateDatabase.GetStateByType(state);
             else

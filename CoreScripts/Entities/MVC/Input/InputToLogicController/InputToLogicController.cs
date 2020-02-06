@@ -1,18 +1,19 @@
 ﻿public class InputToLogicController : AbstractInputController
 {
-    public InputToLogicController()
+    public override void SetLogicToControl(LogicEntity logicEntity)
     {
+        base.SetLogicToControl(logicEntity);
         this.EnableController();
     }
 
     public override void EnableController()
     {
-        GameEventSystem.instance.AddEventListener<EntityInputSentEvent>(this.ProcessInputEvent);
+        this.LogicEntity.EntityBlackboard.gameEventSystem.AddEventListener<EntityInputSentEvent>(this.ProcessInputEvent);
     }
 
     public override void DisableController()
     {
-        GameEventSystem.instance.RemoveEventListener<EntityInputSentEvent>(this.ProcessInputEvent);
+        this.LogicEntity.EntityBlackboard.gameEventSystem.RemoveEventListener<EntityInputSentEvent>(this.ProcessInputEvent);
     }
 
     public void ProcessInputEvent(EntityInputSentEvent entityInputSentEvent)

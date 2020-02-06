@@ -1,8 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public abstract class AbstractExternalStateDeserializer : AbstractStateDeserializer
+﻿public abstract class AbstractExternalStateDeserializer<T> : AbstractStateDeserializer<T> where T : StateSnapshot
 {
     protected string externalPath;
 

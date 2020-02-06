@@ -1,12 +1,19 @@
 ﻿using System.Collections.Generic;
 
-public class EmptyFSMStateDatabase<T> : DefaultFSMStateDatabase<T, EmptyFSMStateData>
+public class EmptyFSMStateDatabase<Key> : EmptyFSMStateDatabaseCustomState<FSMState<EmptyFSMStateData>, Key>
 {
-    public EmptyFSMStateDatabase() : base()
+    public EmptyFSMStateDatabase(Dictionary<Key, FSMState<EmptyFSMStateData>> statesDatabase) : base(statesDatabase)
+    {
+    }
+}
+
+public class EmptyFSMStateDatabaseCustomState<State, Key> : DefaultFSMStateDatabaseCustomState<State, Key, EmptyFSMStateData> where State : FSMState<EmptyFSMStateData>
+{
+    public EmptyFSMStateDatabaseCustomState() : base()
     {
     }
 
-    public EmptyFSMStateDatabase(Dictionary<T, FSMState<EmptyFSMStateData>> statesDatabase) : base(statesDatabase)
+    public EmptyFSMStateDatabaseCustomState(Dictionary<Key, State> statesDatabase) : base(statesDatabase)
     {
     }
 }

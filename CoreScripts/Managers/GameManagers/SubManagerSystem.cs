@@ -3,72 +3,78 @@ using MEC;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
-public class SubManagerSystem<T> where T : class, Manager
+public class SubManagerSystem<ManagerContainer, ManagerType> where ManagerType : Manager where ManagerContainer : AbstractManagerContainer<ManagerType>
 {
-    public Action OnAllInitialSubManagersReady;
+    public event Action OnAllManagersInited;
 
-    protected HashSet<T> subManagers;
+    protected HashSet<ManagerContainer> subManagers;
 
-    public SubManagerSystem() : this(new List<T>())
+    public SubManagerSystem() : this(new List<ManagerContainer>())
     {
     }
 
-    public SubManagerSystem(List<T> subManagers)
+    public SubManagerSystem(List<ManagerContainer> subManagers)
     {
-        this.subManagers = new HashSet<T>();
-        foreach (T manager in subManagers)
+        this.subManagers = new HashSet<ManagerContainer>();
+        foreach (ManagerContainer manager in subManagers)
             this.RegisterSubManager(manager);
+    }
 
-        this.CheckSubManagersState();
+    public void SetReadyAllManagers()
+    {
+        foreach (var manager in subManagers)
+            manager.SetState(ManagerReadyStates.Ready);
     }
 
     public void InitAllManagers()
     {
-        foreach (T manager in subManagers)
-            manager.Setup();
+        this.WaitAndInitAllSubManagers();
     }
 
     public void UpdateSubManagers()
     {
-        foreach (T subManager in subManagers)
+        foreach (ManagerType subManager in subManagers.Where(subManager => subManager.State == ManagerReadyStates.Inited).Select(managerContainer => managerContainer.Manager).ToList())
             subManager.UpdateManager();
     }
 
-    public List<T> GetAllSubManagers()
+    public List<ManagerType> GetAllSubManagers()
     {
-        return this.subManagers.ToList();
+        return this.subManagers.Select(managerContainer => (ManagerType)managerContainer.Manager).ToList();
     }
 
-    public void GetManagerWhenReady<W>(Action<W> onManagerReadyCallback) where W : class, T
+    public void GetManagerWhenReady<W>(Action<W> onManagerReadyCallback) where W : class, ManagerType
     {
         //COROUTINES DO NOT START WHEN CALL INSIDE OF AN ANONYMOUS CALL
         //The submanager system does not uses the application coroutine manager because even that manager has to be loaded by this manager.
         Timing.RunCoroutine(this.CheckIfManagerIsReady(onManagerReadyCallback));
     }
 
-    public void RegisterSubManager(T entityManager)
+    public void RegisterSubManager(ManagerContainer entityManagerContainer)
     {
-        this.subManagers.Add(entityManager);
+        this.subManagers.Add(entityManagerContainer);
     }
 
-    public W GetManager<W>() where W : class, T
+    public W GetManager<W>() where W : Manager
     {
         W tempManager = default;
 
-        IEnumerable<W> wSubManagerList = this.subManagers.Select(subManager => subManager as W);
+        IEnumerable<ManagerType> wSubManagerList = this.subManagers.Select(subManager => subManager.Manager);
 
-        foreach (W manager in wSubManagerList)
+        foreach (Manager manager in wSubManagerList)
+        {
             if (manager is W)
             {
-                tempManager = manager;
-                return tempManager as W;
+                tempManager = (W)manager;
+                return tempManager;
             }
+        }
 
-        return tempManager as W;
+        return tempManager;
     }
 
-    private IEnumerator<float> CheckIfManagerIsReady<W>(Action<W> onManagerReadyCallback) where W : class, T
+    private IEnumerator<float> CheckIfManagerIsReady<W>(Action<W> onManagerReadyCallback) where W : class, ManagerType
     {
         W manager = default;
         while (manager == null)
@@ -81,18 +87,27 @@ public class SubManagerSystem<T> where T : class, Manager
         }
     }
 
-    private void CheckSubManagersState()
+    private void WaitAndInitAllSubManagers()
     {
-        Timing.RunCoroutine(this.CheckIfAllSubManagersAreReady());
+        Timing.RunCoroutine(this.CheckAndInitAllSubManagers(
+            () =>
+            {
+                foreach (var manager in subManagers)
+                    manager.SetState(ManagerReadyStates.Inited);
+
+                this.OnAllManagersInited?.Invoke();
+            }));
     }
 
-    private IEnumerator<float> CheckIfAllSubManagersAreReady()
+    private IEnumerator<float> CheckAndInitAllSubManagers(Action onAllReady)
     {
         yield return Timing.WaitUntilDone(() =>
         {
-            return subManagers.All(subManager => subManager.GetState == ManagerReadyStates.Ready);
+            return subManagers.All(subManager => subManager.State == ManagerReadyStates.Ready);
         });
 
-        this.OnAllInitialSubManagersReady?.Invoke();
+        yield return 0;
+
+        onAllReady?.Invoke();
     }
 }

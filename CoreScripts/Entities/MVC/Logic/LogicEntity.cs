@@ -4,10 +4,10 @@
     public EntityBlackboard EntityBlackboard { get; set; }
 
     //TODO: ENTITY STATS SHOULD BE A SCRIPTABLE OBJECT AND IT SHOULD BE ON ENTITYTSTATEMANAGER
-    public LogicEntity(AbstractViewEntity viewEntity)
+    public LogicEntity(AbstractViewEntity viewEntity, EntityBlackboard entityBlackboard)
     {
         this.Init(viewEntity);
-        this.EntityBlackboard = new EntityBlackboard();
+        this.EntityBlackboard = entityBlackboard;
     }
 
     public void Init(AbstractViewEntity viewEntity)

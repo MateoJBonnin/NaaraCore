@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 
-public class ExternalBinaryStateDeserializer : AbstractExternalStateDeserializer
+public class ExternalBinaryStateDeserializer<T> : AbstractExternalStateDeserializer<T> where T : StateSnapshot
 {
     private BinaryFormatter binaryFormatter;
     private MemoryStream memoryStream;
@@ -12,11 +12,11 @@ public class ExternalBinaryStateDeserializer : AbstractExternalStateDeserializer
         this.memoryStream = new MemoryStream();
     }
 
-    public override StateSnapshot DeserializeState()
+    public override T DeserializeState()
     {
         byte[] stateInBytes = File.ReadAllBytes(this.externalPath);
         this.memoryStream.Write(stateInBytes, 0, stateInBytes.Length);
-        StateSnapshot stateSnapshot = (StateSnapshot)this.binaryFormatter.Deserialize(this.memoryStream);
+        T stateSnapshot = (T)this.binaryFormatter.Deserialize(this.memoryStream);
         this.memoryStream.SetLength(0);
         return stateSnapshot;
     }

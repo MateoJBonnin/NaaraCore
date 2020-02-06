@@ -1,10 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class ApplicationEventSystemLoader : AppManager
+﻿public class ApplicationEventSystemLoader : AbstractApplicationManager
 {
-    private ApplicationEventSystem applicationEventSystem;
+    public ApplicationEventSystem applicationEventSystem;
 
     public ApplicationEventSystemLoader()
     {

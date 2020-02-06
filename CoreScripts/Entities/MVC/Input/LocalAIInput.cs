@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using UnityEngine;
-using Managers;
-using System.Linq;
 
 public class LocalAIInput : AbstractInputEntity
 {
@@ -10,7 +7,7 @@ public class LocalAIInput : AbstractInputEntity
     public AIBlackboard aIBlackboard;
 
     private Dictionary<AIState, Func<FSMState<EmptyFSMStateData>>> entityDefaultTypeToAction;
-    private GenericFSM<AIState, EmptyFSMStateData> aiInputFSM { get; set; }
+    private EmptyGenericFSM<AIState> aiInputFSM { get; set; }
 
     //TODO: check this, this may come from who initialices the AI, because it will be hardcodedfor now
     private AbstractAIActionResolver aiActionResolver;
@@ -29,24 +26,19 @@ public class LocalAIInput : AbstractInputEntity
         this.aIBlackboard = new AIBlackboard();
 
         for (int i = managers.Count - 1; i >= 0; i--)
-            this.aIBlackboard.subManagerSystem.RegisterSubManager(managers[i]);
+            this.aIBlackboard.subManagerSystem.RegisterSubManager(new DefaultEntityManagerContainer(managers[i]));
     }
 
     public override void SetLogic(LogicEntity logicEntity)
     {
         base.SetLogic(logicEntity);
-        List<PathNode> randomMapNodes = ManagersService.instance.GetManager<GameMap>().mapManager.GetNodes(new MapNodesRandomRequester<PathNode>(2, new RepeatAllowedRequesterPolicy<PathNode>(), new DistanceBasedFilterZone<PathNode>(this.inputController.LogicEntity.ViewEntity, 25)));
+        List<PathNode> randomMapNodes = AILogicEntity.EntityBlackboard.gameplayController.gameplayManagers.GetManager<GameMap>().mapManager.GetNodes(new MapNodesRandomRequester<PathNode>(2, new RepeatAllowedRequesterPolicy<PathNode>(), new DistanceBasedFilterZone<PathNode>(this.inputController.LogicEntity.ViewEntity, 25)));
 
         //TODO FIX THIS MAYBE THE PATROL CONTEXT CAN HAVE A PATROL SETUP
         //this.patrolSetup = new AIPatrolSetup(new List<AIPatrolPosition>(randomMapNodes.Select(pathNode => new AIPatrolPosition(pathNode)).ToList()), new InstantPatrolTimePolicy(), new FixedListedPositionAIPatrolBehaviour(this.inputController.LogicEntity, new OrderedPatrolCoordinator(this.inputController.LogicEntity)));
         //this.inputController.LogicEntity, new AIBlackboardSetup(patrolSetup));
         this.ThinkActions();
         this.ResolveAIComponents();
-    }
-
-    public override AbstractInputEntityStateSnapshot TempGatherState()
-    {
-        return new LocalAIInputEntityStateSnapshot();
     }
 
     public override void UpdateInput()
@@ -117,7 +109,7 @@ public class LocalAIInput : AbstractInputEntity
         this.entityDefaultTypeToAction = new Dictionary<AIState, Func<FSMState<EmptyFSMStateData>>>();
         this.SetConfigConnectionStates();
         EmptyFSMStateDatabase<AIState> aiStateDatabase = new EmptyFSMStateDatabase<AIState>(this.GetAIPlanStates());
-        this.aiInputFSM = new EmptyGenericFSM<AIState>(aiStateDatabase, new FSMRestrictedTransitioner<AIState, EmptyFSMStateData>(new EmptyFSMTransitionsConfig<AIState>(this.GetAIFSMConfigData(), aiStateDatabase)));
+        this.aiInputFSM = new EmptyGenericFSM<AIState>(aiStateDatabase, new EmptyFSMRestrictedTransitioner<AIState>(new EmptyFSMTransitionsConfig<AIState>(this.GetAIFSMConfigData(), aiStateDatabase)));
         this.aiInputFSM.Feed(AIState.Idle);
     }
 

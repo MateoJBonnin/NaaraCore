@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 
-public abstract class AbstractInputManager<T, W> : AutoInitManager where W : AbstractInputData where T : AbstractInputTrigger<W>
+public abstract class AbstractInputManager<T, W> : AbstractGameplayManager where W : AbstractInputData where T : AbstractInputTrigger<W>
 {
     private List<Action<W>> cachedEmptyActionList = new List<Action<W>>();
-    private GenericDatabaseStructure<T, Action<W>> inputsDatabase;
+    private GenericDatabase<T, Action<W>> inputsDatabase;
 
     public AbstractInputManager()
     {
-        this.inputsDatabase = new GenericDatabaseStructure<T, Action<W>>();
+        this.inputsDatabase = new GenericDatabase<T, Action<W>>();
     }
 
     public void SubscribeToInput(T inputType, Action<W> inputAction)

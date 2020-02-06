@@ -26,13 +26,10 @@ public abstract class AbstractInputEntity
         this.inputController.SetLogicToControl(logicEntity);
     }
 
-    //TEMP, FIX ASAP ALSO THINK TO MAKE THE INPUT ENTITIES FROM HIERARCHY TO COMPONENTS, ALSO MAKE IT NON MONOBEHAVIOUR SINCE
-    // WE HAVE INPUT SERVICE
-    public abstract AbstractInputEntityStateSnapshot TempGatherState();
     public abstract void UpdateInput();
 
     public virtual void ProcessEntityInput(EntityInputData data, ActionFSMState state)
     {
-        GameEventSystem.instance.DispatchEvent(new EntityInputSentEvent(state, this.inputController.LogicEntity, data));
+        this.inputController.LogicEntity.EntityBlackboard.gameplayController.gameplayManagers.GetManager<GameEventSystemLoader>().gameEventSystem.DispatchEvent(new EntityInputSentEvent(state, this.inputController.LogicEntity, data));
     }
 }

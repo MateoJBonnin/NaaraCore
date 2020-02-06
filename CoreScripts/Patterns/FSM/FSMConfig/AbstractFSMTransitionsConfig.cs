@@ -1,15 +1,19 @@
-﻿public abstract class AbstractFSMTransitionsConfig<T, W> where W : AbstractFSMData
+﻿public abstract class AbstractFSMTransitionsConfig<Key, Data> : AbstractFSMTransitionsConfigCustomState<AbstractFSMStateDatabase<Key, Data>, FSMState<Data>, Key, Data> where Data : AbstractFSMData
 {
-    protected abstract AbstractFSMStateDatabase<T, W> FSMStateDatabase { get; set; }
+}
 
-    public abstract void ConfigureConnections(FSMStateLinksData<T> configData);
-    public abstract void RemoveTransition(T from, T to);
-    public abstract void SetTransition(T from, T to);
-    public abstract FSMState<W> GetStateFromTransition(T from, T to);
+public abstract class AbstractFSMTransitionsConfigCustomState<Database, State, Key, Data> where Data : AbstractFSMData where State : FSMState<Data> where Database : AbstractFSMStateDatabaseCustomState<State, Key, Data>
+{
+    protected abstract Database FSMStateDatabase { get; set; }
 
-    public static FSMStateLink<T> StateToConfig(T from, T to)
+    public abstract void ConfigureConnections(FSMStateLinksData<Key> configData);
+    public abstract void RemoveTransition(Key from, Key to);
+    public abstract void SetTransition(Key from, Key to);
+    public abstract State GetStateFromTransition(Key from, Key to);
+
+    public static FSMStateLink<Key> StateToConfig(Key from, Key to)
     {
-        FSMStateLink<T> config = new FSMStateLink<T>(from, to);
+        FSMStateLink<Key> config = new FSMStateLink<Key>(from, to);
         return config;
     }
 }

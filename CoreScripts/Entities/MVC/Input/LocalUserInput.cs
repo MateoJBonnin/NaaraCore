@@ -3,26 +3,25 @@ using System.Collections.Generic;
 
 public class LocalUserInput : AbstractUserInput
 {
+    private List<LocalUserInputContextData> localUserInputContextDatas;
+
     public LocalUserInput(AbstractInputController inputController, List<EntityInputLink> entityInputLinks, List<LocalUserInputContextData> localUserInputContextDatas) : base(inputController, entityInputLinks)
     {
-        GameInputsManager gameInputsManager = ManagersService.instance.GetManager<GameInputsManager>();
-
-        for (int i = localUserInputContextDatas.Count - 1; i >= 0; i--)
-            for (int j = localUserInputContextDatas[i].abstractEntityInputTriggers.Count - 1; j >= 0; j--)
-            {
-                AbstractEntityInputTrigger entityInputTrigger = localUserInputContextDatas[i].abstractEntityInputTriggers[j];
-                gameInputsManager.SubscribeToInput(localUserInputContextDatas[i].abstractGameInputTrigger, (GameInputData data) => TriggerInput(data, entityInputTrigger));
-            }
+        this.localUserInputContextDatas = localUserInputContextDatas;
     }
 
     public override void SetLogic(LogicEntity logicEntity)
     {
         base.SetLogic(logicEntity);
-    }
 
-    public override AbstractInputEntityStateSnapshot TempGatherState()
-    {
-        return new LocalUserInputEntityStateSnapshot() { inputController = this.inputController };
+        GameInputsManager gameInputsManager = inputController.LogicEntity.EntityBlackboard.gameplayController.gameplayManagers.GetManager<GameInputsManager>();
+
+        for (int i = this.localUserInputContextDatas.Count - 1; i >= 0; i--)
+            for (int j = this.localUserInputContextDatas[i].abstractEntityInputTriggers.Count - 1; j >= 0; j--)
+            {
+                AbstractEntityInputTrigger entityInputTrigger = this.localUserInputContextDatas[i].abstractEntityInputTriggers[j];
+                gameInputsManager.SubscribeToInput(this.localUserInputContextDatas[i].abstractGameInputTrigger, (GameInputData data) => this.TriggerInput(data, entityInputTrigger));
+            }
     }
 
     public override void UpdateInput()

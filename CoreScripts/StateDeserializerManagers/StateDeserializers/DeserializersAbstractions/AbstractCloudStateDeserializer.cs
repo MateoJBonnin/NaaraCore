@@ -1,7 +1,3 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public abstract class AbstractCloudStateDeserializer : AbstractStateDeserializer
+﻿public abstract class AbstractCloudStateDeserializer<T> : AbstractStateDeserializer<T> where T : StateSnapshot
 {
 }

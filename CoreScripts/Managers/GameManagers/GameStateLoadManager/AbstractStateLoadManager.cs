@@ -1,4 +1,4 @@
-﻿public abstract class AbstractStateLoadManager : AutoInitManager
+﻿public abstract class AbstractStateLoadManager<T> : AbstractApplicationManager where T : StateSnapshot
 {
-    public abstract void Load(StateSnapshot stateSnapshot);
+    public abstract void Load(T stateSnapshot);
 }

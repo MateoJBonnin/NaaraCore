@@ -23,7 +23,7 @@ namespace Managers
         private Transform pathNodesParentUnused;
         private Transform pathNodesParent;
 
-        public void Init(Transform gridTransform, T mapNodePrefab, PathGridPopulator<T> PathGridPopulator)
+        public void Init(Transform gridTransform, T mapNodePrefab, GameplayCoroutineManager gameplayCoroutineManager, PathGridPopulator<T> PathGridPopulator)
         {
             GameObject gridParent = new GameObject(GRID_PARENT_NAME);
             gridParent.transform.SetParent(gridTransform, true);
@@ -33,7 +33,7 @@ namespace Managers
             gridParentUnused.transform.SetParent(gridTransform, true);
             this.pathNodesParentUnused = gridParentUnused.transform;
 
-            this.PathNodePoolFactory = new PooleableFactory<T>(() => GameObject.Instantiate(mapNodePrefab, this.pathNodesParentUnused), DEFAULT_POOL_INIT_AMOUNT, () => this.OnMapReady?.Invoke());
+            this.PathNodePoolFactory = new PooleableFactory<T>(() => GameObject.Instantiate(mapNodePrefab, this.pathNodesParentUnused), gameplayCoroutineManager, DEFAULT_POOL_INIT_AMOUNT, () => this.OnMapReady?.Invoke());
             this.PathNodes = PathGridPopulator.InitGrid(this.GetNode);
             PathGridPopulator.abstractGridPopulator.ConfigureNodes(this.PathNodes);
         }

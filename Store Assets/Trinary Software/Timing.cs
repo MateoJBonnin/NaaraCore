@@ -1966,7 +1966,7 @@ namespace MEC
 
         public static float WaitUntilDone(IEnumerator<float> coroutine)
         {
-            return Timing.WaitUntilDone(ApplicationManager.instance.appSystems.GetManager<ApplicationCoroutineManager>().AppCoroutineStarter(coroutine));
+            return Timing.WaitUntilDone(Timing.RunCoroutine(coroutine));// ApplicationController.instance.appManagers.GetManager<ApplicationCoroutineManager>().AppCoroutineStarter(coroutine)); ;
         }
 
         private static IEnumerator<float> _StartWhenDone(AsyncOperation operation, IEnumerator<float> pausedProc)

@@ -1,19 +1,14 @@
-﻿using System;
+﻿using Pool;
+using System;
 using System.Collections.Generic;
-using Pool;
-using System.Linq;
 using UnityEngine;
 
 public abstract class AbstractViewEntity : MonoBehaviour, IPooleable, INavTargeteable
 {
     public abstract void ProcessEntityAction(ActionRequestType actionRequestType);
 
-    public CharacterType Type { get; set; }
     public Rigidbody rb;
     public event Action<IPooleable> OnReturnedItem;
-
-    [SerializeField]
-    private float closestNodesRadius;
 
     public void EnableObject()
     {

@@ -1,19 +1,16 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using UnityEngine;
 
-public class GenericDatabaseStructure<T, W>
+public class GenericDatabase<T, W>
 {
     private Dictionary<T, List<W>> database;
 
-    public GenericDatabaseStructure()
+    public GenericDatabase()
     {
         this.database = new Dictionary<T, List<W>>();
     }
 
-    public GenericDatabaseStructure(Dictionary<T, List<W>> database)
+    public GenericDatabase(Dictionary<T, List<W>> database)
     {
         this.database = database;
     }
@@ -29,6 +26,17 @@ public class GenericDatabaseStructure<T, W>
         databaseWList.Add(w);
         tempWList.AddRange(databaseWList);
         this.database[t] = tempWList;
+    }
+
+    public T GetKeyByData(W t)
+    {
+        foreach (KeyValuePair<T, List<W>> dataKV in database)
+        {
+            dataKV.Value.Contains(t);
+            return dataKV.Key;
+        }
+
+        return default(T);
     }
 
     public void RemoveData(T t, W w)
@@ -79,10 +87,7 @@ public class GenericDatabaseStructure<T, W>
 
     public List<W> GetData(T t)
     {
-        List<W> data;
-        this.database.TryGetValue(t, out data);
-
-        return data;
+        return this.database.DefaultGet(t, () => new List<W>());
     }
 
     public Dictionary<T, List<W>> GetAllData()

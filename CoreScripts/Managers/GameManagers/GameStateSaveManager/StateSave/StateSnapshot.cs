@@ -1,6 +1,6 @@
 ﻿using System;
 
 [Serializable]
-public class StateSnapshot
+public abstract class StateSnapshot
 {
 }

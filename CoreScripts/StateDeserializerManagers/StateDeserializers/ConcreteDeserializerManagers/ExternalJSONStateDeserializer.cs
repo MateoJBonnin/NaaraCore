@@ -1,15 +1,15 @@
 ﻿using System.IO;
 
-public class ExternalJSONStateDeserializer : AbstractExternalStateDeserializer
+public class ExternalJSONStateDeserializer<T> : AbstractExternalStateDeserializer<T> where T : StateSnapshot
 {
-    private LocalJSONStateDeserializer jsonDeserializer;
+    private LocalJSONStateDeserializer<T> jsonDeserializer;
 
     public ExternalJSONStateDeserializer(string externalPath) : base(externalPath)
     {
-        this.jsonDeserializer = new LocalJSONStateDeserializer(File.ReadAllText(this.externalPath));
+        this.jsonDeserializer = new LocalJSONStateDeserializer<T>(File.ReadAllText(this.externalPath));
     }
 
-    public override StateSnapshot DeserializeState()
+    public override T DeserializeState()
     {
         return this.jsonDeserializer.DeserializeState();
     }

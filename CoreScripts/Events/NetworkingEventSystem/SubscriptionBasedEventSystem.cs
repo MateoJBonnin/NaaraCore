@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 public class SubscriptionBasedEventSystem<T> : AbstractEventSystem<T> where T : ISubscriptionEventeable
 {
-    protected GenericDatabaseStructure<Type, InstantEventContainer> databaseStructure;
+    protected GenericDatabase<Type, InstantEventContainer> databaseStructure;
 
     public virtual void DispatchEvent(ISubscriptionEventeable gameEvent)
     {
@@ -72,7 +72,7 @@ public class SubscriptionBasedEventSystem<T> : AbstractEventSystem<T> where T : 
     protected override void PrepareEventSystem()
     {
         base.PrepareEventSystem();
-        this.databaseStructure = new GenericDatabaseStructure<Type, InstantEventContainer>();
+        this.databaseStructure = new GenericDatabase<Type, InstantEventContainer>();
         this.databaseStructure.ClearData();
     }
 }

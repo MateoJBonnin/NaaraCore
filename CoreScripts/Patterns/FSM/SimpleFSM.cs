@@ -4,3 +4,10 @@
     {
     }
 }
+
+public class SimpleFSMCustomState<Database, State, Key, Data> : GenericFSMCustomState<Database, AbstractFSMTransitionerCustomState<State, Key, Data>, State, Key, Data> where Data : AbstractFSMData where State : FSMState<Data> where Database : AbstractFSMStateDatabaseCustomState<State, Key, Data>
+{
+    public SimpleFSMCustomState(Database fSMStateDatabase) : base(fSMStateDatabase, new FSMForcedTransitionerCustomState<State, Key, Data>(fSMStateDatabase))
+    {
+    }
+}

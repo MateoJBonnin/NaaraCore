@@ -14,6 +14,7 @@ namespace Pool
 
         private int startAmount;
 
+        private GameplayCoroutineManager gameplayCoroutineManager;
         private Queue<PooleableObject<T>> itemQueue;
         private Queue<PooleableObject<T>> unusedQueue;
 
@@ -23,8 +24,9 @@ namespace Pool
             set { startAmount = Mathf.Max(value, 0); }
         }
 
-        public PooleableFactory(Func<T> getItem, int startAmount = 0, Action OnInitPoolFinished = null) : base(getItem)
+        public PooleableFactory(Func<T> getItem, GameplayCoroutineManager gameplayCoroutineManager, int startAmount = 0, Action OnInitPoolFinished = null) : base(getItem)
         {
+            this.gameplayCoroutineManager = gameplayCoroutineManager;
             this.unusedQueue = new Queue<PooleableObject<T>>(startAmount);
             this.itemQueue = new Queue<PooleableObject<T>>(startAmount);
             this.StartAmount = startAmount;
@@ -32,7 +34,7 @@ namespace Pool
             this.InitialPool();
         }
 
-        public PooleableFactory(Func<T> itemCreation, Action OnInitPoolFinished = null) : this(itemCreation, PooleableFactory<PooleableObject<T>>.POOL_DEFAULT_STARTAMOUNT, OnInitPoolFinished)
+        public PooleableFactory(Func<T> itemCreation, GameplayCoroutineManager gameplayCoroutineManager, Action OnInitPoolFinished = null) : this(itemCreation, gameplayCoroutineManager, PooleableFactory<PooleableObject<T>>.POOL_DEFAULT_STARTAMOUNT, OnInitPoolFinished)
         {
         }
 
@@ -68,7 +70,7 @@ namespace Pool
 
         private void InitialPool()
         {
-            ApplicationManager.instance.appSystems.GetManager<ApplicationCoroutineManager>().AppCoroutineStarter(this.LazyCreate(PooleableFactory<T>.TIME_SLICING_COUNT, this.StartAmount, (item) =>
+            this.gameplayCoroutineManager.AppCoroutineStarter(this.LazyCreate(PooleableFactory<T>.TIME_SLICING_COUNT, this.StartAmount, (item) =>
             {
                 ((IPooleable)item).DisableObject();
                 this.itemQueue.Enqueue(new PooleableObject<T>(item));

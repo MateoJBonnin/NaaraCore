@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class RequestReplyBasedEventSystem<T> : AbstractEventSystem<T> where T : IReplyEventeable
 {
-    protected GenericDatabaseStructure<Type, EventContainer> databaseStructure;
+    protected GenericDatabase<Type, EventContainer> databaseStructure;
 
     public RequestReplyBasedEventSystem()
     {
@@ -14,9 +14,8 @@ public class RequestReplyBasedEventSystem<T> : AbstractEventSystem<T> where T : 
     {
         //List<EventContainer> eventContainers = this.databaseStructure.GetData(gameEvent.GetType());
         //if (eventContainers == null) return;
-        ApplicationCoroutineManager acm = new ApplicationCoroutineManager();
+        //ApplicationCoroutineManager acm = new ApplicationCoroutineManager();
         //acm.AppCoroutineStarter(eventListener.Raise(gameEvent, OnEventReply));
-
     }
 
     private IEnumerator EventWaiter(IEnumerator yielder)
@@ -83,7 +82,7 @@ public class RequestReplyBasedEventSystem<T> : AbstractEventSystem<T> where T : 
     protected override void PrepareEventSystem()
     {
         base.PrepareEventSystem();
-        this.databaseStructure = new GenericDatabaseStructure<Type, EventContainer>();
+        this.databaseStructure = new GenericDatabase<Type, EventContainer>();
         this.databaseStructure.ClearData();
     }
 }

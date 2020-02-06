@@ -1,10 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using System.Linq;
-using Pool;
+﻿using Pool;
 using System;
-using Managers;
+using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
 
 public class PathNode : MonoBehaviour, INodeable, IPooleable, INavTargeteable
 {
@@ -29,13 +27,13 @@ public class PathNode : MonoBehaviour, INodeable, IPooleable, INavTargeteable
 
     public List<INodeable> GetNeighNodes()
     {
-        List<INodeable> neighNodes = new List<INodeable>(ManagersService.instance.GetManager<GameMap>().mapManager.GetPathNodes());
+        List<PathNode> neighNodes = GameObject.FindObjectsOfType<PathNode>().ToList();//new List<INodeable>(GameplayController.instance.GamePlayer.subManagerSystem.GetManager<GameMap>().mapManager.GetPathNodes());
         neighNodes = neighNodes
-             .Where(n => Vector3.SqrMagnitude(((PathNode)n).transform.position - transform.position) <= connectionsRadius)
-             .Where(n => ((PathNode)n) != this)
+             .Where(n => Vector3.SqrMagnitude(n.transform.position - transform.position) <= connectionsRadius)
+             .Where(n => (n) != this)
              .ToList();
 
-        return neighNodes;
+        return neighNodes.Select(nodes => nodes as INodeable).ToList();
     }
 
     public Vector3 GetPosition()

@@ -1,52 +1,69 @@
 ﻿using System.Collections.Generic;
 
-public class DefaultFSMTransitionsConfig<T, W> : AbstractFSMTransitionsConfig<T, W> where W : AbstractFSMData
+public class DefaultFSMTransitionsConfig<Key, Data> : DefaultFSMTransitionsConfigCustomState<AbstractFSMStateDatabase<Key, Data>, FSMState<Data>, Key, Data> where Data : AbstractFSMData
 {
-    protected GenericDatabaseStructure<T, T> TransitionsDatabase { get; private set; }
-    protected override AbstractFSMStateDatabase<T, W> FSMStateDatabase { get; set; }
+    public DefaultFSMTransitionsConfig(AbstractFSMStateDatabase<Key, Data> stateDatabase) : base(stateDatabase)
+    {
+    }
 
-    public DefaultFSMTransitionsConfig(AbstractFSMStateDatabase<T, W> stateDatabase)
+    public DefaultFSMTransitionsConfig(FSMStateLinksData<Key> configData, AbstractFSMStateDatabase<Key, Data> stateDatabase) : base(configData, stateDatabase)
+    {
+    }
+}
+
+public class DefaultFSMTransitionsConfigCustomState<Database, State, Key, Data> : AbstractFSMTransitionsConfigCustomState<Database, State, Key, Data> where Data : AbstractFSMData where State : FSMState<Data> where Database : AbstractFSMStateDatabaseCustomState<State, Key, Data>
+{
+    protected GenericDatabase<Key, Key> TransitionsDatabase { get; private set; }
+    protected override Database FSMStateDatabase { get; set; }
+
+    public DefaultFSMTransitionsConfigCustomState(Database stateDatabase)
     {
         this.Init(stateDatabase);
     }
 
-    public DefaultFSMTransitionsConfig(FSMStateLinksData<T> configData, AbstractFSMStateDatabase<T, W> stateDatabase)
+    public DefaultFSMTransitionsConfigCustomState(FSMStateLinksData<Key> configData, Database stateDatabase)
     {
         this.Init(stateDatabase);
         this.ConfigureConnections(configData);
     }
 
-    public void FSMConfigUtil<R>(FSMStateLinksData<T> configData, AbstractFSMStateDatabase<T, W> stateDatabase) where R : FSMState<W>
+    public void FSMConfigUtil<R>(FSMStateLinksData<R> configData, Database stateDatabase) where R : Key
     {
         this.Init(stateDatabase);
         this.ConfigureConnections(configData);
     }
 
-    public void Init(AbstractFSMStateDatabase<T, W> stateDatabase)
+    public void Init(Database stateDatabase)
     {
-        this.TransitionsDatabase = new GenericDatabaseStructure<T, T>();
+        this.TransitionsDatabase = new GenericDatabase<Key, Key>();
         this.FSMStateDatabase = stateDatabase;
     }
 
-    public override void ConfigureConnections(FSMStateLinksData<T> configData)
+    public override void ConfigureConnections(FSMStateLinksData<Key> configData)
     {
-        foreach (FSMStateLink<T> stateConn in configData.linksData)
+        foreach (FSMStateLink<Key> stateConn in configData.linksData)
             this.SetTransition(stateConn.stateFrom, stateConn.stateTo);
     }
 
-    public override void SetTransition(T from, T to)
+    public void ConfigureConnections<R>(FSMStateLinksData<R> configData) where R : Key
+    {
+        foreach (FSMStateLink<R> stateConn in configData.linksData)
+            this.SetTransition(stateConn.stateFrom, stateConn.stateTo);
+    }
+
+    public override void SetTransition(Key from, Key to)
     {
         this.TransitionsDatabase.RegisterData(from, to);
     }
 
-    public override void RemoveTransition(T from, T to)
+    public override void RemoveTransition(Key from, Key to)
     {
         this.TransitionsDatabase.RemoveData(from, to);
     }
 
-    public override FSMState<W> GetStateFromTransition(T from, T to)
+    public override State GetStateFromTransition(Key from, Key to)
     {
-        List<T> transitionsFrom = this.TransitionsDatabase.GetData(from);
+        List<Key> transitionsFrom = this.TransitionsDatabase.GetData(from);
 
         if (transitionsFrom != null && transitionsFrom.Contains(from))
             return this.FSMStateDatabase.GetStateByType(transitionsFrom.Find(state => state.Equals(to)));

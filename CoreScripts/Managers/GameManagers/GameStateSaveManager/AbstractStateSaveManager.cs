@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-public abstract class AbstractStateSaveManager : AutoInitManager
+﻿public abstract class AbstractStateSaveManager<T> : AbstractGameplayManager
 {
-    public abstract StateSnapshot GetStateSnapshot();
+    public abstract T GetStateSnapshot();
 }

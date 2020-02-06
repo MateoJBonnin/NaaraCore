@@ -7,11 +7,13 @@ public class AIPatrollingState : EmptyFSMState
     public Action OnPatrollingInterrumped;
 
     private EmptySimpleFSM<AIPatrollingStates> patrollingFSM;
+    private GameplayCoroutineManager gameplayCoroutineManager;
     private AbstractAIPatrolBehaviour aIPatrolBehaviour;
     private AbstractPatrolTimePolicy patrolTimePolicy;
 
-    public AIPatrollingState(AbstractAIPatrolBehaviour aIPatrolBehaviour, AbstractPatrolTimePolicy patrolTimePolicy)
+    public AIPatrollingState(AbstractAIPatrolBehaviour aIPatrolBehaviour, AbstractPatrolTimePolicy patrolTimePolicy, GameplayCoroutineManager gameplayCoroutineManager)
     {
+        this.gameplayCoroutineManager = gameplayCoroutineManager;
         this.aIPatrolBehaviour = aIPatrolBehaviour;
         this.patrolTimePolicy = patrolTimePolicy;
         this.patrollingFSM = new EmptySimpleFSM<AIPatrollingStates>(new EmptyFSMStateDatabase<AIPatrollingStates>(this.GetAIPatrollingStatesConfig()));
@@ -50,7 +52,7 @@ public class AIPatrollingState : EmptyFSMState
         SimpleFSMState waitingState = new SimpleFSMState();
         waitingState.OnEnterAction += () =>
         {
-            ApplicationManager.instance.appSystems.GetManager<ApplicationCoroutineManager>().AppCoroutineStarter(this.WaitForNextPatrolStep());
+            gameplayCoroutineManager.AppCoroutineStarter(this.WaitForNextPatrolStep());
         };
 
         SimpleFSMState interrumpedState = new SimpleFSMState();

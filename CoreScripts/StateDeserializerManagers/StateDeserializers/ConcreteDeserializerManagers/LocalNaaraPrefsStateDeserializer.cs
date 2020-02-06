@@ -1,13 +1,13 @@
-﻿public class LocalNaaraPrefsStateDeserializer : AbstractLocalStateDeserializer
+﻿public class LocalNaaraPrefsStateDeserializer<T> : AbstractLocalStateDeserializer<T> where T : StateSnapshot
 {
-    private LocalJSONStateDeserializer jsonDeserializer;
+    private LocalJSONStateDeserializer<T> jsonDeserializer;
 
     public LocalNaaraPrefsStateDeserializer(string prefsKey)
     {
-        this.jsonDeserializer = new LocalJSONStateDeserializer(NaaraPlayerPrefs.GetString(prefsKey));
+        this.jsonDeserializer = new LocalJSONStateDeserializer<T>(NaaraPlayerPrefs.GetString(prefsKey));
     }
 
-    public override StateSnapshot DeserializeState()
+    public override T DeserializeState()
     {
         return this.jsonDeserializer.DeserializeState();
     }

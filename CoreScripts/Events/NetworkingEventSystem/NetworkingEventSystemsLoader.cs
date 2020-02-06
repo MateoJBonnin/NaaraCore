@@ -1,8 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class NetworkingEventSystemsLoader : AppManager
+﻿public class NetworkingEventSystemsLoader : AbstractApplicationManager
 {
     private LLNetworkingEventSystem lLNetworkingEventSystem;
     private HLNetworkingEventSystem hLNetworkingEventSystem;

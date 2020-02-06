@@ -1,4 +1,4 @@
-﻿public abstract class AbstractStateDeserializer
+﻿public abstract class AbstractStateDeserializer<T> where T : StateSnapshot
 {
-    public abstract StateSnapshot DeserializeState();
+    public abstract T DeserializeState();
 }

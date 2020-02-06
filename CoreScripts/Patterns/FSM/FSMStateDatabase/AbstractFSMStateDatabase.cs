@@ -1,14 +1,18 @@
 ﻿using System.Collections.Generic;
 
-public abstract class AbstractFSMStateDatabase<T, W> where W : AbstractFSMData
+public abstract class AbstractFSMStateDatabase<Key, Data> : AbstractFSMStateDatabaseCustomState<FSMState<Data>, Key, Data> where Data : AbstractFSMData
 {
-    public abstract void ConfigureStates(Dictionary<T, FSMState<W>> statesData);
-    public abstract void ConfigureStates<R>(Dictionary<T, R> statesData) where R : FSMState<W>;
-    public abstract bool ContainsState(T stateKey);
-    public abstract void SetState(T stateKey, FSMState<W> fSMState);
-    public abstract void RemoveState(T stateKey);
-    public abstract T GetTypeByState(FSMState<W> state);
-    public abstract FSMState<W> GetStateByType(T type);
-    public abstract List<FSMState<W>> GetAllStates();
-    public abstract List<T> GetAllTypes();
+
+}
+
+public abstract class AbstractFSMStateDatabaseCustomState<State, Key, Data> where Data : AbstractFSMData where State : FSMState<Data>
+{
+    public abstract void ConfigureStates(Dictionary<Key, State> statesData);
+    public abstract bool ContainsState(Key stateKey);
+    public abstract void SetState(Key stateKey, State fSMState);
+    public abstract void RemoveState(Key stateKey);
+    public abstract Key GetTypeByState(State state);
+    public abstract State GetStateByType(Key type);
+    public abstract List<State> GetAllStates();
+    public abstract List<Key> GetAllTypes();
 }

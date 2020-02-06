@@ -1,6 +1,13 @@
-﻿public class SimpleNoKeyFSM<T> : SimpleFSM<FSMState<T>, T> where T : AbstractFSMData
+﻿public class SimpleNoKeyFSM<Data> : SimpleNoKeyFSMCustomState<FSMState<Data>, Data> where Data : AbstractFSMData
 {
-    public SimpleNoKeyFSM(AbstractFSMStateDatabase<FSMState<T>, T> fSMStateDatabase) : base(fSMStateDatabase)
+    public SimpleNoKeyFSM(NoKeyFSMStateDatabaseCustomState<FSMState<Data>, Data> fSMStateDatabase) : base(fSMStateDatabase)
+    {
+    }
+}
+
+public class SimpleNoKeyFSMCustomState<State, Data> : SimpleFSMCustomState<NoKeyFSMStateDatabaseCustomState<State, Data>, State, State, Data> where Data : AbstractFSMData where State : FSMState<Data>
+{
+    public SimpleNoKeyFSMCustomState(NoKeyFSMStateDatabaseCustomState<State, Data> fSMStateDatabase) : base(fSMStateDatabase)
     {
     }
 }

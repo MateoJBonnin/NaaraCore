@@ -1,6 +1,8 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System.IO;
 
-public class LocalJSONStateDeserializer : AbstractLocalStateDeserializer
+public class LocalJSONStateDeserializer<T> : AbstractLocalStateDeserializer<T> where T : StateSnapshot
 {
     private string jsonKey;
 
@@ -9,8 +11,8 @@ public class LocalJSONStateDeserializer : AbstractLocalStateDeserializer
         this.jsonKey = jsonKey;
     }
 
-    public override StateSnapshot DeserializeState()
+    public override T DeserializeState()
     {
-        return JsonConvert.DeserializeObject<StateSnapshot>(this.jsonKey, new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.All });
+        return JsonConvert.DeserializeObject<T>(this.jsonKey);
     }
 }

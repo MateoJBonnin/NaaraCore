@@ -42,11 +42,6 @@ public class RemoteUserInput : AbstractUserInput
         base.SetLogic(logicEntity);
     }
 
-    public override AbstractInputEntityStateSnapshot TempGatherState()
-    {
-        throw new System.NotImplementedException();
-    }
-
     public override void UpdateInput()
     {
     }
