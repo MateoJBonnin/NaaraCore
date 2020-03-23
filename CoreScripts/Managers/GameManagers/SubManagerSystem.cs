@@ -106,8 +106,6 @@ public class SubManagerSystem<ManagerContainer, ManagerType> where ManagerType :
             return subManagers.All(subManager => subManager.State == ManagerReadyStates.Ready);
         });
 
-        yield return 0;
-
         onAllReady?.Invoke();
     }
 }
