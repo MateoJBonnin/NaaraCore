@@ -2,15 +2,15 @@
 
 public class LogicEntityFactory
 {
-    public LogicEntity GetLogicEntity(List<AbstractEntityManagerContainer> entityManagers, AbstractViewEntity abstractViewEntity, GameplayController gameplayController, ApplicationController applicationController)
+    public LogicEntity GetLogicEntity(List<AbstractLogicEntityManagerContainer> entityManagers, GameplayController gameplayController, ApplicationController applicationController)
     {
-        return this.CreateLogicEntity(abstractViewEntity, entityManagers, gameplayController, applicationController);
+        return this.CreateLogicEntity(entityManagers, gameplayController, applicationController);
     }
 
-    private LogicEntity CreateLogicEntity(AbstractViewEntity abstractViewEntity, List<AbstractEntityManagerContainer> entityManagers, GameplayController gameplayController, ApplicationController applicationController)
+    private LogicEntity CreateLogicEntity(List<AbstractLogicEntityManagerContainer> entityManagers, GameplayController gameplayController, ApplicationController applicationController)
     {
-        LogicEntity logicEntity = new LogicEntity(abstractViewEntity, new EntityBlackboard(applicationController, gameplayController));
-        SubManagerSystem<AbstractEntityManagerContainer, EntityManager> entitySubManagerSystem = logicEntity.EntityBlackboard.subManagerSystem;
+        LogicEntity logicEntity = new LogicEntity(new EntityBlackboard(applicationController, gameplayController));
+        SubManagerSystem<AbstractLogicEntityManagerContainer, LogicEntityManager> entitySubManagerSystem = logicEntity.EntityBlackboard.subManagerSystem;
 
         for (int i = entityManagers.Count - 1; i >= 0; i--)
         {
@@ -20,7 +20,7 @@ public class LogicEntityFactory
             entityManagers[i].Manager.GameplayController = gameplayController;
         }
 
-        List<EntityManager> allEntityManagers = entitySubManagerSystem.GetAllSubManagers();
+        List<LogicEntityManager> allEntityManagers = entitySubManagerSystem.GetAllSubManagers();
         entitySubManagerSystem.SetReadyAllManagers();
         entitySubManagerSystem.InitAllManagers();
 

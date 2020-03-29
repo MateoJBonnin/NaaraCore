@@ -32,7 +32,7 @@ public class LocalAIInput : AbstractInputEntity
     public override void SetLogic(LogicEntity logicEntity)
     {
         base.SetLogic(logicEntity);
-        List<PathNode> randomMapNodes = AILogicEntity.EntityBlackboard.gameplayController.gameplayManagers.GetManager<GameMap>().mapManager.GetNodes(new MapNodesRandomRequester<PathNode>(2, new RepeatAllowedRequesterPolicy<PathNode>(), new DistanceBasedFilterZone<PathNode>(this.inputController.LogicEntity.ViewEntity, 25)));
+        List<PathNode> randomMapNodes = AILogicEntity.EntityBlackboard.gameplayController.gameplayManagers.GetManager<GameMap>().mapManager.GetNodes(new MapNodesRandomRequester<PathNode>(2, new RepeatAllowedRequesterPolicy<PathNode>(), new DistanceBasedFilterZone<PathNode>(25)));
 
         //TODO FIX THIS MAYBE THE PATROL CONTEXT CAN HAVE A PATROL SETUP
         //this.patrolSetup = new AIPatrolSetup(new List<AIPatrolPosition>(randomMapNodes.Select(pathNode => new AIPatrolPosition(pathNode)).ToList()), new InstantPatrolTimePolicy(), new FixedListedPositionAIPatrolBehaviour(this.inputController.LogicEntity, new OrderedPatrolCoordinator(this.inputController.LogicEntity)));

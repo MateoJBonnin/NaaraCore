@@ -1,19 +1,5 @@
 ﻿public abstract class AbstractEntityManager : EntityManager
 {
-    public LogicEntity LogicEntity
-    {
-        get
-        {
-            return this.logicEntity;
-        }
-        set
-        {
-            this.logicEntity = value;
-            this.OnLogicEntityConfigured(logicEntity);
-
-        }
-    }
-
     public ApplicationController ApplicationController
     {
         get
@@ -44,11 +30,6 @@
 
     private ApplicationController applicationController;
     private GameplayController gameplayController;
-    private LogicEntity logicEntity;
-
-    public virtual void OnLogicEntityConfigured(LogicEntity logicEntity)
-    {
-    }
 
     public void OnApplicationInitializerConfigured(ApplicationController applicationController)
     {

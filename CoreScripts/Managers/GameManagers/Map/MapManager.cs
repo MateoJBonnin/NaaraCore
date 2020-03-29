@@ -53,10 +53,11 @@ namespace Managers
             return this.GetClosestNodeTo(viewEntity.transform.position);
         }
 
-        public T GetClosestNodeTo(LogicEntity logicEntity)
-        {
-            return this.GetClosestNodeTo(logicEntity.ViewEntity);
-        }
+        //TODO: REPLACE THIS WITH LOGICAL ENTITIES INSTEAD
+        //public T GetClosestNodeTo(LogicEntity logicEntity)
+        //{
+        //    return this.GetClosestNodeTo(logicEntity.ViewEntity);
+        //}
 
         public List<T> GetNodes(AbstractMapNodesRequester<T> mapNodesRequester)
         {

@@ -19,7 +19,7 @@ public class AIPatrolManager : AIManager
         //for (int i = aIBlackboardSetup.patrolSetup.AIPatrolPositions.Count - 1; i >= 0; i--)
         //    this.patrolMemoryTracker.RegisterPatrolPosition(new EPatrolPositionTracked(aIBlackboardSetup.patrolSetup.AIPatrolPositions[i], this.aiInput.aIBlackboard.AILogicEntity));
 
-        this.aiInput.AILogicEntity.EntityBlackboard.subManagerSystem.GetManagerWhenReady<EntityMemoryManager>((entityMemoryManager) => entityMemoryManager.memoryTrackers.RegisterSubManager(new DefaultEntityManagerContainer<AbstractMemoryTrackersManager>(this.patrolMemoryTracker)));
+        this.aiInput.AILogicEntity.EntityBlackboard.subManagerSystem.GetManagerWhenReady<EntityMemoryManager>((entityMemoryManager) => entityMemoryManager.memoryTrackers.RegisterSubManager(new DefaultLogicEntityManagerContainer<AbstractMemoryTrackersManager>(this.patrolMemoryTracker)));
     }
 
     public AIPatrolManager(LocalAIInput aiInput) : base(aiInput)

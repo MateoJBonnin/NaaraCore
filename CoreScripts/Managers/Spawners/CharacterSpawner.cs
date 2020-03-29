@@ -2,43 +2,43 @@
 using System;
 using UnityEngine;
 
-public class CharacterSpawner<T> : GameSpawner where T : AbstractViewEntity
+public class CharacterSpawner<ViewEntity> : GameSpawner where ViewEntity : AbstractViewEntity
 {
     public override Action OnSpawnerReady { get; set; }
 
     private const string POOL_NAME = "Pool";
 
-    private PooleableFactory<T> characterFactory;
-    private T characterPrefab;
+    private PooleableFactory<ViewEntity> characterFactory;
+    private ViewEntity characterPrefab;
     private Transform poolContainer;
     private Transform prefabContainer;
 
-    public CharacterSpawner(T characterPrefab, Transform container, Transform prefabContainer, GameplayCoroutineManager gameplayCoroutineManager, Action OnSpawnerReady = null, bool createInitPool = true)
+    public CharacterSpawner(ViewEntity characterPrefab, Transform container, Transform prefabContainer, GameplayCoroutineManager gameplayCoroutineManager, Action OnSpawnerReady = null, bool createInitPool = true)
     {
         this.OnSpawnerReady += OnSpawnerReady;
-        GameObject concreteContainer = new GameObject(typeof(T).ToString() + " " + POOL_NAME);
+        GameObject concreteContainer = new GameObject(typeof(ViewEntity).ToString() + " " + POOL_NAME);
         concreteContainer.transform.SetParent(container);
         this.poolContainer = concreteContainer.transform;
         this.prefabContainer = prefabContainer;
         this.characterPrefab = characterPrefab;
         if (createInitPool)
-            this.characterFactory = new PooleableFactory<T>(this.CreateCharacter, gameplayCoroutineManager, this.OnInitialPoolFinished);
+            this.characterFactory = new PooleableFactory<ViewEntity>(this.CreateCharacter, gameplayCoroutineManager, this.OnInitialPoolFinished);
         else
-            this.characterFactory = new PooleableFactory<T>(this.CreateCharacter, gameplayCoroutineManager, 0, this.OnInitialPoolFinished);
+            this.characterFactory = new PooleableFactory<ViewEntity>(this.CreateCharacter, gameplayCoroutineManager, 0, this.OnInitialPoolFinished);
     }
 
-    public T SpawnCharacter()
+    public ViewEntity SpawnCharacter()
     {
-        T character = this.characterFactory.GetPoolItem();
+        ViewEntity character = this.characterFactory.GetPoolItem();
         character.OnReturnedItem += this.ReturnBaseCharacter;
         character.transform.SetParent(this.prefabContainer);
         character.EnableObject();
         return character;
     }
 
-    private T CreateCharacter()
+    private ViewEntity CreateCharacter()
     {
-        T character = (GameObject.Instantiate<T>(this.characterPrefab as T));
+        ViewEntity character = (GameObject.Instantiate<ViewEntity>(this.characterPrefab as ViewEntity));
         character.transform.SetParent(this.poolContainer);
         character.DisableObject();
         return character;
@@ -50,7 +50,7 @@ public class CharacterSpawner<T> : GameSpawner where T : AbstractViewEntity
         characterTransform.SetParent(this.poolContainer);
         character.OnReturnedItem -= this.ReturnBaseCharacter;
         character.DisableObject();
-        this.characterFactory.ReturnPoolItem((T)character);
+        this.characterFactory.ReturnPoolItem((ViewEntity)character);
     }
 
     private void OnInitialPoolFinished()

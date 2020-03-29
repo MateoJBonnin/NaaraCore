@@ -5,6 +5,8 @@ using UnityEngine;
 
 public abstract class AbstractViewEntity : MonoBehaviour, IPooleable, INavTargeteable
 {
+    public EntityBlackboard EntityBlackboard { get; set; }
+
     public abstract void ProcessEntityAction(ActionRequestType actionRequestType);
 
     public Rigidbody rb;
