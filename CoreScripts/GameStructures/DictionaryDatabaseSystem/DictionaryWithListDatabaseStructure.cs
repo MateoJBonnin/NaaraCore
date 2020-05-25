@@ -100,6 +100,16 @@ public class GenericDatabase<T, W>
         return this.database.Count > 0;
     }
 
+    public int GetKeysCount()
+    {
+        return this.database.Keys.Count;
+    }
+
+    public int GetValueCount(T key)
+    {
+        return this.database.ContainsKey(key) ? this.database[key].Count : 0;
+    }
+
     public void ClearData()
     {
         this.database.Clear();

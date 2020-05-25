@@ -9,7 +9,7 @@ public class LogicEntityFactory
 
     private LogicEntity CreateLogicEntity(List<AbstractLogicEntityManagerContainer> entityManagers, GameplayController gameplayController, ApplicationController applicationController)
     {
-        LogicEntity logicEntity = new LogicEntity(new EntityBlackboard(applicationController, gameplayController));
+        LogicEntity logicEntity = new LogicEntity(new LogicEntityBlackboard(applicationController, gameplayController));
         SubManagerSystem<AbstractLogicEntityManagerContainer, LogicEntityManager> entitySubManagerSystem = logicEntity.EntityBlackboard.subManagerSystem;
 
         for (int i = entityManagers.Count - 1; i >= 0; i--)

@@ -6,11 +6,13 @@ public abstract class AbstractEntityTrackerManager<T> : AbstractGameplayManager
 {
     public Dictionary<T, LogicEntity> entityToLogicData;
     protected List<T> allEntities;
+    private Dictionary<T, int> tByIndex;
 
     public AbstractEntityTrackerManager()
     {
         this.allEntities = new List<T>();
         this.entityToLogicData = new Dictionary<T, LogicEntity>();
+        this.tByIndex = new Dictionary<T, int>();
     }
 
     public virtual LogicEntity GetLogicFromTracker(T tracker)
@@ -25,7 +27,12 @@ public abstract class AbstractEntityTrackerManager<T> : AbstractGameplayManager
 
     public int GetEntitiesIndex(T entity)
     {
-        return this.allEntities.IndexOf(entity);
+        return this.tByIndex.DefaultGet(entity, () =>
+        {
+            var entityIndex = this.allEntities.IndexOf(entity);
+            this.tByIndex[entity] = entityIndex;
+            return entityIndex;
+        });
     }
 
     public T GetEntitiesByIndex(int entityIndex)

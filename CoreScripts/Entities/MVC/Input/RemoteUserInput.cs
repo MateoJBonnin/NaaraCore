@@ -46,7 +46,7 @@ public class RemoteUserInput : AbstractUserInput
     {
     }
 
-    public override void ProcessEntityInput(EntityInputData data, ActionFSMState state)
+    protected override void ProcessEntityInput(EntityInputData data, ActionFSMState state)
     {
     }
 }

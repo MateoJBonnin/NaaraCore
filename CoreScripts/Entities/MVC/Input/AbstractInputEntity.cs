@@ -28,7 +28,7 @@ public abstract class AbstractInputEntity
 
     public abstract void UpdateInput();
 
-    public virtual void ProcessEntityInput(EntityInputData data, ActionFSMState state)
+    protected virtual void ProcessEntityInput(EntityInputData data, ActionFSMState state)
     {
         this.inputController.LogicEntity.EntityBlackboard.gameplayController.gameplayManagers.GetManager<GameEventSystemLoader>().gameEventSystem.DispatchEvent(new EntityInputSentEvent(state, this.inputController.LogicEntity, data));
     }

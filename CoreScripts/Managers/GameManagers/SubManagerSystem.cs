@@ -3,7 +3,6 @@ using MEC;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
 
 public class SubManagerSystem<ManagerContainer, ManagerType> where ManagerType : Manager where ManagerContainer : AbstractManagerContainer<ManagerType>
 {
@@ -24,8 +23,7 @@ public class SubManagerSystem<ManagerContainer, ManagerType> where ManagerType :
 
     public void SetReadyAllManagers()
     {
-        foreach (var manager in subManagers)
-            manager.SetState(ManagerReadyStates.Ready);
+        ChangeManagersState(ManagerReadyStates.Ready);
     }
 
     public void InitAllManagers()
@@ -33,15 +31,25 @@ public class SubManagerSystem<ManagerContainer, ManagerType> where ManagerType :
         this.WaitAndInitAllSubManagers();
     }
 
+    public void SetAllManagersAsNotReady()
+    {
+        ChangeManagersState(ManagerReadyStates.NotReady);
+    }
+
     public void UpdateSubManagers()
     {
-        foreach (ManagerType subManager in subManagers.Where(subManager => subManager.State == ManagerReadyStates.Inited).Select(managerContainer => managerContainer.Manager).ToList())
+        foreach (ManagerType subManager in GetAllInitedSubManagers())
             subManager.UpdateManager();
     }
 
     public List<ManagerType> GetAllSubManagers()
     {
         return this.subManagers.Select(managerContainer => (ManagerType)managerContainer.Manager).ToList();
+    }
+
+    public List<ManagerType> GetAllInitedSubManagers()
+    {
+        return this.subManagers.Where(subManager => subManager.State == ManagerReadyStates.Inited).Select(managerContainer => managerContainer.Manager).ToList();
     }
 
     public void GetManagerWhenReady<W>(Action<W> onManagerReadyCallback) where W : class, ManagerType
@@ -72,6 +80,12 @@ public class SubManagerSystem<ManagerContainer, ManagerType> where ManagerType :
         }
 
         return tempManager;
+    }
+
+    private void ChangeManagersState(ManagerReadyStates state)
+    {
+        foreach (var manager in subManagers)
+            manager.SetState(state);
     }
 
     private IEnumerator<float> CheckIfManagerIsReady<W>(Action<W> onManagerReadyCallback) where W : class, ManagerType

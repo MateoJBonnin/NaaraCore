@@ -3,7 +3,7 @@
 public abstract class AbstractInputController
 {
     [JsonIgnore]
-    public AbstractViewEntity ViewEntity { get; set; }
+    public ViewEntity ViewEntity { get; set; }
     public LogicEntity LogicEntity { get; set; }
 
     public virtual void SetLogicToControl(LogicEntity logicEntity)
@@ -11,7 +11,7 @@ public abstract class AbstractInputController
         this.LogicEntity = logicEntity;
     }
 
-    public virtual void SetViewToControl(AbstractViewEntity viewEntity)
+    public virtual void SetViewToControl(ViewEntity viewEntity)
     {
         this.ViewEntity = viewEntity;
     }

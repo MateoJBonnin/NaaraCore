@@ -4,7 +4,7 @@
     {
     }
 
-    public DefaultViewEntityManagerContainer(ViewEntityManager entityManager, AbstractViewEntity viewEntity) : base(entityManager)
+    public DefaultViewEntityManagerContainer(ViewEntityManager entityManager, ViewEntity viewEntity) : base(entityManager)
     {
         entityManager.ViewEntity = viewEntity;
         this.SetState(ManagerReadyStates.Ready);
@@ -17,7 +17,7 @@ public class DefaultViewEntityManagerContainer<T> : AbstractViewEntityManagerCon
     {
     }
 
-    public DefaultViewEntityManagerContainer(T entityManager, AbstractViewEntity viewEntity) : base(entityManager)
+    public DefaultViewEntityManagerContainer(T entityManager, ViewEntity viewEntity) : base(entityManager)
     {
         entityManager.ViewEntity = viewEntity;
         this.SetState(ManagerReadyStates.Ready);

@@ -1,6 +1,6 @@
-﻿public class AbstractViewEntityManager : AbstractEntityManager, ViewEntityManager
+﻿public abstract class AbstractViewEntityManager : AbstractEntityManager, ViewEntityManager
 {
-    public AbstractViewEntity ViewEntity
+    public ViewEntity ViewEntity
     {
         get
         {
@@ -14,9 +14,13 @@
         }
     }
 
-    private AbstractViewEntity viewEntity;
+    private ViewEntity viewEntity;
 
-    public void OnViewEntityConfigured(AbstractViewEntity ViewEntity)
+    public virtual void OnViewEntityConfigured(ViewEntity ViewEntity)
+    {
+    }
+
+    public virtual void FixedUpdateManager()
     {
     }
 }

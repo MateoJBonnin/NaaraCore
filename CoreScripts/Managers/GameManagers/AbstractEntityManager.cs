@@ -40,15 +40,15 @@
     }
 
     /// <summary>
-    /// Will be called after the LogicEntity has been assigned for the first time.
-    /// Used to initialize the manager, self references, sub managers, etc. Other managers of the Logic Entity may not be yet available / ready.
+    /// Will be called after the Entity has been assigned for the first time.
+    /// Used to initialize the manager, self references, sub managers, etc. Other managers of the Entity may not be yet available / ready.
     /// </summary>
     public virtual void OnReady()
     {
     }
 
     /// <summary>
-    /// Will be called after all the sub managers for this logic entity are ready.
+    /// Will be called after all the sub managers for this entity are ready.
     /// Used to set references of others sub managers as they will be available in this point.
     /// </summary>
     public virtual void OnInit()

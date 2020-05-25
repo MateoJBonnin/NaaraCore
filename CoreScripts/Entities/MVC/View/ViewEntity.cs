@@ -3,21 +3,21 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class AbstractViewEntity : MonoBehaviour, IPooleable, INavTargeteable
+public abstract class ViewEntity : MonoBehaviour, IPooleable, INavTargeteable
 {
-    public EntityBlackboard EntityBlackboard { get; set; }
+    public ViewEntityBlackboard EntityBlackboard { get; set; }
 
     public abstract void ProcessEntityAction(ActionRequestType actionRequestType);
 
     public Rigidbody rb;
     public event Action<IPooleable> OnReturnedItem;
 
-    public void EnableObject()
+    public virtual void EnableObject()
     {
         this.gameObject.SetActive(true);
     }
 
-    public void DisableObject()
+    public virtual void DisableObject()
     {
         this.gameObject.SetActive(false);
     }
@@ -32,6 +32,11 @@ public abstract class AbstractViewEntity : MonoBehaviour, IPooleable, INavTarget
         //when someone storages all the nav targeteabbles, ask him for the closets ones.
         return new List<INavTargeteable>();
         // return FindObjectsOfType<MonoBehaviour>().OfType<INavTargeteable>().Where(node => Vector3.Distance(node.GetPosition(), this.transform.position) <= this.closestNodesRadius).ToList();
+    }
+
+    public void FixedUpdate()
+    {
+        this.EntityBlackboard.FixedUpdateBlackboard();
     }
 
     public virtual void Reset()

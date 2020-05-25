@@ -28,8 +28,13 @@ public class LocalUserInput : AbstractUserInput
     {
     }
 
-    private void TriggerInput(GameInputData data, AbstractEntityInputTrigger entityInputTrigger)
+    public void TriggerInput(GameInputData data, AbstractEntityInputTrigger entityInputTrigger)
     {
         this.entityInputsManager.TriggerInput(entityInputTrigger, new EntityInputData(data));
+    }
+
+    public void TriggerInput(GameInputData data, int entityInputTriggerIndex)
+    {
+        this.entityInputsManager.TriggerInput(entityInputTriggerIndex, new EntityInputData(data));
     }
 }

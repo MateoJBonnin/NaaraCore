@@ -48,7 +48,7 @@ namespace Managers
             return this.PathNodes.OrderBy(node => Vector3.SqrMagnitude(node.transform.position - position)).First();
         }
 
-        public T GetClosestNodeTo(AbstractViewEntity viewEntity)
+        public T GetClosestNodeTo(ViewEntity viewEntity)
         {
             return this.GetClosestNodeTo(viewEntity.transform.position);
         }

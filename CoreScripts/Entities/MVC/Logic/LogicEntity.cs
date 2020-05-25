@@ -1,9 +1,9 @@
 ﻿public class LogicEntity
 {
-    public EntityBlackboard EntityBlackboard { get; set; }
+    public LogicEntityBlackboard EntityBlackboard { get; set; }
 
     //TODO: ENTITY STATS SHOULD BE A SCRIPTABLE OBJECT AND IT SHOULD BE ON ENTITYTSTATEMANAGER
-    public LogicEntity(EntityBlackboard entityBlackboard)
+    public LogicEntity(LogicEntityBlackboard entityBlackboard)
     {
         this.EntityBlackboard = entityBlackboard;
     }

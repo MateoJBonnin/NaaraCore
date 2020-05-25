@@ -4,7 +4,7 @@ using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 
-public static class DictionaryExtensions
+public static class EnumerablesExtensions
 {
     public static bool In<T>(this T x, HashSet<T> set)
     {
