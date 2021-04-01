@@ -1,11 +1,13 @@
-﻿using MEC;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using MEC;
 
-public abstract class AbstractCoroutineManager
+public class CoroutineManager
 {
-    protected abstract string CoroutinesTag
+    private const string DEFAULT_COROUTINE_TAG = "CoroutineNaaraCore";
+
+    protected string CoroutinesTag
     {
-        get;
+        get { return DEFAULT_COROUTINE_TAG; }
     }
 
     protected string id;

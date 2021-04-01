@@ -1,6 +1,6 @@
-﻿using Factory;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using Factory;
 using UnityEngine;
 
 namespace Pool
@@ -14,17 +14,18 @@ namespace Pool
 
         private int startAmount;
 
-        private GameplayCoroutineManager gameplayCoroutineManager;
+        private CoroutineManager gameplayCoroutineManager;
         private Queue<PooleableObject<T>> itemQueue;
         private Queue<PooleableObject<T>> unusedQueue;
 
         public int StartAmount
         {
-            get { return startAmount; }
-            set { startAmount = Mathf.Max(value, 0); }
+            get { return this.startAmount; }
+            set { this.startAmount = Mathf.Max(value, 0); }
         }
 
-        public PooleableFactory(Func<T> getItem, GameplayCoroutineManager gameplayCoroutineManager, int startAmount = 0, Action OnInitPoolFinished = null) : base(getItem)
+        public PooleableFactory(Func<T> getItem, CoroutineManager gameplayCoroutineManager, int startAmount = 0, Action OnInitPoolFinished = null) :
+            base(getItem)
         {
             this.gameplayCoroutineManager = gameplayCoroutineManager;
             this.unusedQueue = new Queue<PooleableObject<T>>(startAmount);
@@ -34,13 +35,14 @@ namespace Pool
             this.InitialPool();
         }
 
-        public PooleableFactory(Func<T> itemCreation, GameplayCoroutineManager gameplayCoroutineManager, Action OnInitPoolFinished = null) : this(itemCreation, gameplayCoroutineManager, PooleableFactory<PooleableObject<T>>.POOL_DEFAULT_STARTAMOUNT, OnInitPoolFinished)
+        public PooleableFactory(Func<T> itemCreation, CoroutineManager gameplayCoroutineManager, Action OnInitPoolFinished = null) : this(itemCreation,
+            gameplayCoroutineManager, PooleableFactory<PooleableObject<T>>.POOL_DEFAULT_STARTAMOUNT, OnInitPoolFinished)
         {
         }
 
         public T GetPoolItem()
         {
-            T item = default(T);
+            T item = default;
             if (0 < this.itemQueue.Count)
             {
                 PooleableObject<T> poolObject = this.itemQueue.Dequeue();
@@ -48,7 +50,9 @@ namespace Pool
                 item = poolObject.item;
             }
             else
+            {
                 item = this.Create();
+            }
 
             return item;
         }
@@ -63,23 +67,22 @@ namespace Pool
                 poolObject.item = item;
             }
             else
+            {
                 poolObject = new PooleableObject<T>(item);
+            }
 
             this.itemQueue.Enqueue(poolObject);
         }
 
         private void InitialPool()
         {
-            this.gameplayCoroutineManager.AppCoroutineStarter(this.LazyCreate(PooleableFactory<T>.TIME_SLICING_COUNT, this.StartAmount, (item) =>
-            {
-                ((IPooleable)item).DisableObject();
-                this.itemQueue.Enqueue(new PooleableObject<T>(item));
-                return item;
-            }, () =>
-            {
-                this.OnInitPoolFinished?.Invoke();
-            }
-             ));
+            this.gameplayCoroutineManager.AppCoroutineStarter(this.LazyCreate(TIME_SLICING_COUNT, this.StartAmount, item =>
+                {
+                    ((IPooleable) item).DisableObject();
+                    this.itemQueue.Enqueue(new PooleableObject<T>(item));
+                    return item;
+                }, () => { this.OnInitPoolFinished?.Invoke(); }
+            ));
         }
     }
 }
