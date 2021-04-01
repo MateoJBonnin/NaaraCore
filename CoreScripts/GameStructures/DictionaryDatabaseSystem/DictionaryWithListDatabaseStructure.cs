@@ -10,18 +10,25 @@ public class GenericDatabase<T, W>
         this.database = new Dictionary<T, List<W>>();
     }
 
-    public GenericDatabase(Dictionary<T, List<W>> database)
+    public GenericDatabase(GenericDatabase<T, W> genericDatabase)
     {
-        this.database = database;
+        this.database = new Dictionary<T, List<W>>(genericDatabase.database);
     }
 
-    public void RegisterData(T t, W w)
+    public GenericDatabase(Dictionary<T, List<W>> database)
+    {
+        this.database = new Dictionary<T, List<W>>(database);
+    }
+
+    public void AddData(T t, W w)
     {
         List<W> tempWList = new List<W>();
         List<W> databaseWList = new List<W>();
 
         if (this.database.ContainsKey(t))
+        {
             databaseWList = this.database[t];
+        }
 
         databaseWList.Add(w);
         tempWList.AddRange(databaseWList);
@@ -30,32 +37,38 @@ public class GenericDatabase<T, W>
 
     public T GetKeyByData(W t)
     {
-        foreach (KeyValuePair<T, List<W>> dataKV in database)
+        foreach (KeyValuePair<T, List<W>> dataKV in this.database)
         {
             dataKV.Value.Contains(t);
             return dataKV.Key;
         }
 
-        return default(T);
+        return default;
     }
 
     public void RemoveData(T t, W w)
     {
         if (!this.database.ContainsKey(t))
+        {
             return;
+        }
 
         for (int i = this.database[t].Count - 1; i >= 0; i--)
         {
             W data = this.database[t][i];
             if (w.Equals(data))
+            {
                 this.database[t].Remove(this.database[t][i]);
+            }
         }
     }
 
     public void RemoveKeyFrom(T t)
     {
         if (!this.database.ContainsKey(t))
+        {
             return;
+        }
 
         this.database.Remove(t);
     }
@@ -63,7 +76,9 @@ public class GenericDatabase<T, W>
     public void ClearAllDataFrom(T t)
     {
         if (!this.database.ContainsKey(t))
+        {
             return;
+        }
 
         this.database[t] = new List<W>();
     }
@@ -72,12 +87,12 @@ public class GenericDatabase<T, W>
     {
         List<W> data = this.GetData(t);
         for (int i = data.Count - 1; i >= 0; i--)
-        {
             if (predicate(data[i]))
+            {
                 return data[i];
-        }
+            }
 
-        return default(W);
+        return default;
     }
 
     public void SearchAndRemoveDataByPredicate(T t, Func<W, bool> predicate)
@@ -87,7 +102,9 @@ public class GenericDatabase<T, W>
 
     public List<W> GetData(T t)
     {
-        return this.database.DefaultGet(t, () => new List<W>());
+        return this.database != null && this.database.ContainsKey(t)
+            ? this.database[t]
+            : new List<W>(); //this.database != null ? this.database[t] .DefaultGet(t, () => new List<W>());
     }
 
     public Dictionary<T, List<W>> GetAllData()

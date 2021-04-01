@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-public class ExternalJSONStateDeserializer<T> : AbstractExternalStateDeserializer<T> where T : StateSnapshot
+public class ExternalJSONStateDeserializer<T> : AbstractExternalStateDeserializer<T> where T : IStateSnapshot
 {
     private LocalJSONStateDeserializer<T> jsonDeserializer;
 

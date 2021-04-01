@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 
-public class ExternalBinaryStateDeserializer<T> : AbstractExternalStateDeserializer<T> where T : StateSnapshot
+public class ExternalBinaryStateDeserializer<T> : AbstractExternalStateDeserializer<T> where T : IStateSnapshot
 {
     private BinaryFormatter binaryFormatter;
     private MemoryStream memoryStream;

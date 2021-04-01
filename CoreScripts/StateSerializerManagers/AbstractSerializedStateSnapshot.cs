@@ -1,7 +1,7 @@
 ﻿using System;
 
 [Serializable]
-public abstract class AbstractSerializedStateSnapshot : StateSnapshot
+public abstract class AbstractSerializedStateSnapshot : IStateSnapshot
 {
     public int serializedIndex;
 

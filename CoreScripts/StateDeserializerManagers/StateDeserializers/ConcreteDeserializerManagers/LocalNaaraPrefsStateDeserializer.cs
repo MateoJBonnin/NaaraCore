@@ -1,4 +1,4 @@
-﻿public class LocalNaaraPrefsStateDeserializer<T> : AbstractLocalStateDeserializer<T> where T : StateSnapshot
+﻿public class LocalNaaraPrefsStateDeserializer<T> : AbstractLocalStateDeserializer<T> where T : IStateSnapshot
 {
     private LocalJSONStateDeserializer<T> jsonDeserializer;
 

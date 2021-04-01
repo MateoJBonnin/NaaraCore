@@ -1,3 +1,3 @@
-﻿public abstract class AbstractCloudStateDeserializer<T> : AbstractStateDeserializer<T> where T : StateSnapshot
+﻿public abstract class AbstractCloudStateDeserializer<T> : AbstractStateDeserializer<T> where T : IStateSnapshot
 {
 }

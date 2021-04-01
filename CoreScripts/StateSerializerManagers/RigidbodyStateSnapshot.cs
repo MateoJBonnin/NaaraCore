@@ -2,7 +2,7 @@
 using UnityEngine;
 
 [Serializable]
-public class RigidbodyStateSnapshot : StateSnapshot
+public class RigidbodyStateSnapshot : IStateSnapshot
 {
     public Vector3 velocity;
     public Vector3 angularVelocity;

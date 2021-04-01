@@ -1,8 +1,8 @@
 ﻿public class LocalMemorySerializer : AbstractLocalStateSerializer
 {
-    public StateSnapshot stateSnapshot;
+    public IStateSnapshot stateSnapshot;
 
-    public override void SerializeState(StateSnapshot stateSnapshot)
+    public override void SerializeState(IStateSnapshot stateSnapshot)
     {
         this.stateSnapshot = stateSnapshot;
     }

@@ -1,4 +1,4 @@
 ﻿public abstract class AbstractStateSerializer
 {
-    public abstract void SerializeState(StateSnapshot stateSnapshot);
+    public abstract void SerializeState(IStateSnapshot stateSnapshot);
 }

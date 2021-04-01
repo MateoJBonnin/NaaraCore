@@ -12,7 +12,7 @@ public class BinaryExternalStateSerializer : AbstractExternalStateSerializer
         this.memoryStream = new MemoryStream();
     }
 
-    public override void SerializeState(StateSnapshot stateSnapshot)
+    public override void SerializeState(IStateSnapshot stateSnapshot)
     {
         this.binaryFormatter.Serialize(this.memoryStream, stateSnapshot);
         File.WriteAllBytes(this.externalPath, this.memoryStream.ToArray());

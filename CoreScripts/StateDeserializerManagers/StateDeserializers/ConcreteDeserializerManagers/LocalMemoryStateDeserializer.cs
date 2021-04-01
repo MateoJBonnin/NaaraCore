@@ -1,4 +1,4 @@
-﻿public class LocalMemoryStateDeserializer<T> : AbstractLocalStateDeserializer<T> where T : StateSnapshot
+﻿public class LocalMemoryStateDeserializer<T> : AbstractLocalStateDeserializer<T> where T : IStateSnapshot
 {
     private T cachedState;
 

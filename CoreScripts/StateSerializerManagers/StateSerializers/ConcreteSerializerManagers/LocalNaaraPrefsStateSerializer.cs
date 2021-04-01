@@ -9,7 +9,7 @@
         this.jsonSerializer = new LocalJSONStateSerializer();
     }
 
-    public override void SerializeState(StateSnapshot stateSnapshot)
+    public override void SerializeState(IStateSnapshot stateSnapshot)
     {
         this.jsonSerializer.SerializeState(stateSnapshot);
         NaaraPlayerPrefs.SetString(prefsKey, this.jsonSerializer.jsonGameSerializedString);

@@ -2,7 +2,7 @@
 using Newtonsoft.Json.Linq;
 using System.IO;
 
-public class LocalJSONStateDeserializer<T> : AbstractLocalStateDeserializer<T> where T : StateSnapshot
+public class LocalJSONStateDeserializer<T> : AbstractLocalStateDeserializer<T> where T : IStateSnapshot
 {
     private string jsonKey;
 
