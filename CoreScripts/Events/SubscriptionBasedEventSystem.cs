@@ -8,12 +8,12 @@ public class SubscriptionBasedEventSystem<T> : AbstractEventSystem<T> where T : 
     public virtual void DispatchEvent(ISubscriptionEventeable gameEvent)
     {
         List<InstantEventContainer> eventContainers = this.databaseStructure.GetData(gameEvent.GetType());
-        if (eventContainers == null) return;
-
-        for (int i = eventContainers.Count - 1; i >= 0; i--)
+        if (eventContainers == null)
         {
-            eventContainers[i].Raise(gameEvent);
+            return;
         }
+
+        for (int i = eventContainers.Count - 1; i >= 0; i--) eventContainers[i].Raise(gameEvent);
     }
 
     public virtual void AddEventListener<W>(Action<W> eventAction) where W : T, ISubscriptionEventeable
@@ -21,7 +21,7 @@ public class SubscriptionBasedEventSystem<T> : AbstractEventSystem<T> where T : 
         SpecificEventContainer<W> eventContainer = new SpecificEventContainer<W>();
         eventContainer.actionStorage = eventAction;
         Type type = typeof(W);
-        this.databaseStructure.RegisterData(type, eventContainer);
+        this.databaseStructure.AddData(type, eventContainer);
     }
 
     public virtual void AddEventListener<W>(Action eventAction) where W : T, ISubscriptionEventeable
@@ -29,19 +29,19 @@ public class SubscriptionBasedEventSystem<T> : AbstractEventSystem<T> where T : 
         SpecificEventContainer eventContainer = new SpecificEventContainer();
         eventContainer.actionStorage = eventAction;
         Type type = typeof(W);
-        this.databaseStructure.RegisterData(type, eventContainer);
+        this.databaseStructure.AddData(type, eventContainer);
     }
 
     public virtual void RemoveEventListener<W>(Action<W> eventAction) where W : T, ISubscriptionEventeable
     {
         Type type = typeof(W);
-        this.databaseStructure.SearchAndRemoveDataByPredicate(type, (InstantEventContainer container) => ((SpecificEventContainer<W>)container).actionStorage == eventAction);
+        this.databaseStructure.SearchAndRemoveDataByPredicate(type, container => ((SpecificEventContainer<W>) container).actionStorage == eventAction);
     }
 
     public virtual void RemoveEventListener<W>(Action eventAction) where W : T, ISubscriptionEventeable
     {
         Type type = typeof(W);
-        this.databaseStructure.SearchAndRemoveDataByPredicate(type, (InstantEventContainer container) => ((SpecificEventContainer)container).actionStorage == eventAction);
+        this.databaseStructure.SearchAndRemoveDataByPredicate(type, container => ((SpecificEventContainer) container).actionStorage == eventAction);
     }
 
     public class SpecificEventContainer<R> : InstantEventContainer where R : ISubscriptionEventeable
@@ -50,7 +50,7 @@ public class SubscriptionBasedEventSystem<T> : AbstractEventSystem<T> where T : 
 
         public void Raise(IEventeable gameEvent)
         {
-            this.actionStorage((R)gameEvent);
+            this.actionStorage((R) gameEvent);
         }
     }
 

@@ -1,4 +1,6 @@
-﻿public abstract class AbstractEventSystem<T> where T : IEventeable
+﻿using UnityEngine;
+
+public abstract class AbstractEventSystem<T> : MonoBehaviour where T : IEventeable
 {
     public virtual void Init()
     {

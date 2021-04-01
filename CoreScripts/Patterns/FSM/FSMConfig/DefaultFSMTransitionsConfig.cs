@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 
-public class DefaultFSMTransitionsConfig<Key, Data> : DefaultFSMTransitionsConfigCustomState<AbstractFSMStateDatabase<Key, Data>, FSMState<Data>, Key, Data> where Data : AbstractFSMData
+public class DefaultFSMTransitionsConfig<Key, Data> : DefaultFSMTransitionsConfigCustomState<AbstractFSMStateDatabase<Key, Data>, FSMState<Data>, Key, Data>
+    where Data : AbstractFSMData
 {
     public DefaultFSMTransitionsConfig(AbstractFSMStateDatabase<Key, Data> stateDatabase) : base(stateDatabase)
     {
@@ -11,10 +12,20 @@ public class DefaultFSMTransitionsConfig<Key, Data> : DefaultFSMTransitionsConfi
     }
 }
 
-public class DefaultFSMTransitionsConfigCustomState<Database, State, Key, Data> : AbstractFSMTransitionsConfigCustomState<Database, State, Key, Data> where Data : AbstractFSMData where State : FSMState<Data> where Database : AbstractFSMStateDatabaseCustomState<State, Key, Data>
+public class DefaultFSMTransitionsConfigCustomState<Database, State, Key, Data> : AbstractFSMTransitionsConfigCustomState<Database, State, Key, Data>
+    where Data : AbstractFSMData where State : FSMState<Data> where Database : AbstractFSMStateDatabaseCustomState<State, Key, Data>
 {
-    protected GenericDatabase<Key, Key> TransitionsDatabase { get; private set; }
-    protected override Database FSMStateDatabase { get; set; }
+    protected GenericDatabase<Key, Key> TransitionsDatabase
+    {
+        get;
+        private set;
+    }
+
+    protected override Database FSMStateDatabase
+    {
+        get;
+        set;
+    }
 
     public DefaultFSMTransitionsConfigCustomState(Database stateDatabase)
     {
@@ -53,7 +64,7 @@ public class DefaultFSMTransitionsConfigCustomState<Database, State, Key, Data> 
 
     public override void SetTransition(Key from, Key to)
     {
-        this.TransitionsDatabase.RegisterData(from, to);
+        this.TransitionsDatabase.AddData(from, to);
     }
 
     public override void RemoveTransition(Key from, Key to)
@@ -66,7 +77,9 @@ public class DefaultFSMTransitionsConfigCustomState<Database, State, Key, Data> 
         List<Key> transitionsFrom = this.TransitionsDatabase.GetData(from);
 
         if (transitionsFrom != null && transitionsFrom.Contains(from))
+        {
             return this.FSMStateDatabase.GetStateByType(transitionsFrom.Find(state => state.Equals(to)));
+        }
 
         return null;
     }
