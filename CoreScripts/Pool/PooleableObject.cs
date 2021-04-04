@@ -11,16 +11,16 @@ namespace Pool
             this.item = item;
         }
 
-        public event Action<IPooleable> OnReturnedItem;
+        public event Action<IPooleable> OnItemReturned;
 
         public void DisableObject()
         {
-            item.DisableObject();
+            this.item.DisableObject();
         }
 
         public void EnableObject()
         {
-            item.EnableObject();
+            this.item.EnableObject();
         }
     }
 }

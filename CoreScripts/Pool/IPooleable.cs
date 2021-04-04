@@ -1,11 +1,7 @@
-﻿using System;
-
-namespace Pool
+﻿namespace Pool
 {
     public interface IPooleable
     {
-        event Action<IPooleable> OnReturnedItem;
-
         void EnableObject();
         void DisableObject();
     }

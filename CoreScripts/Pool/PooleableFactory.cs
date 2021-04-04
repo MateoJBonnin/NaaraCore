@@ -10,7 +10,7 @@ namespace Pool
         public Action OnInitPoolFinished;
 
         private const int POOL_DEFAULT_STARTAMOUNT = 10;
-        private const int TIME_SLICING_COUNT = 250;
+        private const int TIME_SLICING_COUNT = 5;
 
         private int startAmount;
 

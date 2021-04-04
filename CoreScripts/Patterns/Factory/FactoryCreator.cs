@@ -1,6 +1,6 @@
-﻿using MEC;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using MEC;
 
 namespace Factory
 {
@@ -26,14 +26,17 @@ namespace Factory
                     yield return Timing.WaitForOneFrame;
                 }
                 else
+                {
                     count++;
+                }
             }
+
             onComplete();
         }
 
         protected virtual T Create()
         {
-            T item = getItem();
+            T item = this.getItem();
             this.OnItemCreated?.Invoke(item);
             return item;
         }
