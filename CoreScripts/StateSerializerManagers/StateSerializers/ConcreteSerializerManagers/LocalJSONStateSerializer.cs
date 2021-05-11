@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using UnityEngine;
 
 public class LocalJSONStateSerializer : AbstractLocalStateSerializer
 {
@@ -8,6 +7,5 @@ public class LocalJSONStateSerializer : AbstractLocalStateSerializer
     public override void SerializeState(IStateSnapshot stateSnapshot)
     {
         this.jsonGameSerializedString = JsonConvert.SerializeObject(stateSnapshot);
-        Debug.LogError(jsonGameSerializedString);
     }
 }
