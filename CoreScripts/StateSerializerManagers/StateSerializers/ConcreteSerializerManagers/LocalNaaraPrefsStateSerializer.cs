@@ -1,4 +1,6 @@
-﻿public class LocalNaaraPrefsStateSerializer : AbstractLocalStateSerializer
+﻿using UnityEngine;
+
+public class LocalNaaraPrefsStateSerializer : AbstractLocalStateSerializer
 {
     private LocalJSONStateSerializer jsonSerializer;
     private string prefsKey;
