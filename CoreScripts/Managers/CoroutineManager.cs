@@ -37,6 +37,16 @@ public class CoroutineManager
         return Timing.RunCoroutine(coroutine, this.CoroutinesTag + customTag);
     }
 
+    public void AppCoroutinePause(CoroutineHandle coroutine)
+    {
+        Timing.PauseCoroutines(coroutine);
+    }
+
+    public void AppCoroutineResume(CoroutineHandle coroutine)
+    {
+        Timing.ResumeCoroutines(coroutine);
+    }
+
     public void AppCoroutineStopper(CoroutineHandle coroutine)
     {
         Timing.KillCoroutines(coroutine);
