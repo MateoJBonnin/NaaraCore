@@ -76,7 +76,7 @@ public class DefaultFSMTransitionsConfigCustomState<Database, State, Key, Data> 
     {
         List<Key> transitionsFrom = this.TransitionsDatabase.GetData(from);
 
-        if (transitionsFrom != null && transitionsFrom.Contains(from))
+        if (transitionsFrom != null && transitionsFrom.Contains(to))
         {
             return this.FSMStateDatabase.GetStateByType(transitionsFrom.Find(state => state.Equals(to)));
         }
