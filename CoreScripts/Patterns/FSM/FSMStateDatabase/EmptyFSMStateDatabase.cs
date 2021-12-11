@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-public class EmptyFSMStateDatabase<Key> : EmptyFSMStateDatabaseCustomState<FSMState<EmptyFSMStateData>, Key>
+public class EmptyFSMStateDatabase<Key> : DefaultFSMStateDatabase<Key, EmptyFSMStateData>
 {
     public EmptyFSMStateDatabase(Dictionary<Key, FSMState<EmptyFSMStateData>> statesDatabase) : base(statesDatabase)
     {
@@ -9,7 +9,7 @@ public class EmptyFSMStateDatabase<Key> : EmptyFSMStateDatabaseCustomState<FSMSt
 
 public class EmptyFSMStateDatabaseCustomState<State, Key> : DefaultFSMStateDatabaseCustomState<State, Key, EmptyFSMStateData> where State : FSMState<EmptyFSMStateData>
 {
-    public EmptyFSMStateDatabaseCustomState() : base()
+    public EmptyFSMStateDatabaseCustomState()
     {
     }
 

@@ -8,10 +8,10 @@ public class NoTransitionerSimpleNoKeyFSM<State> : SimpleNoKeyFSMCustomState<Sta
 
     public override void Feed(State state, EmptyFSMStateData data = null)
     {
-        this.GetCurrentState?.OnExit();
-        this.GetCurrentType = state;
-        this.GetCurrentState = state;
-        this.GetCurrentState.Feed(data);
-        this.GetCurrentState.OnEnter();
+        this.CurrentState?.OnExit();
+        this.CurrentType = state;
+        this.CurrentState = state;
+        this.CurrentState.Feed(data);
+        this.CurrentState.OnEnter();
     }
 }

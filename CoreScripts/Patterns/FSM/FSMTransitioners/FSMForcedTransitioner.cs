@@ -1,15 +1,14 @@
-﻿using System;
-
-public class FSMForcedTransitioner<T, W> : AbstractFSMTransitioner<T, W> where W : AbstractFSMData
+﻿public class FSMForcedTransitioner<Key, Data> : AbstractFSMTransitioner<Key, Data> where Data : AbstractFSMData
 {
-    protected AbstractFSMStateDatabase<T, W> stateDatabase;
+    protected AbstractFSMStateDatabase<Key, Data> stateDatabase;
 
-    public FSMForcedTransitioner(AbstractFSMStateDatabase<T, W> stateDatabase)
+    public FSMForcedTransitioner(AbstractFSMStateDatabase<Key, Data> stateDatabase)
     {
         this.stateDatabase = stateDatabase;
     }
 
-    public override FSMState<W> TransitionateState(T fromState, T toState)
+
+    public override FSMState<Data> TransitionateState(Key fromState, Key toState)
     {
         return this.stateDatabase.GetStateByType(toState);
     }

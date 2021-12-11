@@ -24,30 +24,30 @@ public class GenericFSMCustomState<Database, Transitioner, State, Key, Data> : A
         if (this.FSMStateDatabase.ContainsState(state))
         {
             State newState = null;
-            if (this.GetCurrentState == null)
+            if (this.CurrentState == null)
                 newState = this.FSMStateDatabase.GetStateByType(state);
             else
-                newState = this.FSMTransitioner.TransitionateState(this.GetCurrentType, state);
+                newState = this.FSMTransitioner.TransitionateState(this.CurrentType, state);
 
             if (null != newState)
             {
-                if (this.GetCurrentState != newState)
+                if (this.CurrentState != newState)
                 {
-                    this.OnStateChanged?.Invoke(this.GetCurrentState, newState);
-                    this.GetCurrentState?.OnExit();
-                    this.GetCurrentType = state;
-                    this.GetCurrentState = newState;
-                    this.GetCurrentState.Feed(data);
-                    this.GetCurrentState.OnEnter();
+                    this.OnStateChanged?.Invoke(this.CurrentState, newState);
+                    this.CurrentState?.OnExit();
+                    this.CurrentType = state;
+                    this.CurrentState = newState;
+                    this.CurrentState.Feed(data);
+                    this.CurrentState.OnEnter();
                 }
                 else
-                    this.GetCurrentState?.Feed(data);
+                    this.CurrentState?.Feed(data);
             }
         }
     }
 
     public virtual void Update()
     {
-        this.GetCurrentState?.OnUpdate();
+        this.CurrentState?.OnUpdate();
     }
 }

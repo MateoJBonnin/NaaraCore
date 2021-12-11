@@ -38,8 +38,8 @@ public abstract class AbstractFSMCustom<Database, Transitioner, State, Key, Data
 
     public Transitioner FSMTransitioner { get; protected set; }
     public Database FSMStateDatabase { get; protected set; }
-    public State GetCurrentState { get; protected set; }
-    public Key GetCurrentType { get; protected set; }
+    public State CurrentState { get; protected set; }
+    public Key CurrentType { get; protected set; }
 
     public AbstractFSMCustom(Database fSMStateDatabase, Transitioner fSMTransitioner)
     {
