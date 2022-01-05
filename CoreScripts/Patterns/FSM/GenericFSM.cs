@@ -1,8 +1,8 @@
 ﻿using System;
 
-public class GenericFSM<Key, Data> : GenericFSMCustomState<AbstractFSMStateDatabase<Key, Data>, AbstractFSMTransitioner<Key, Data>, FSMState<Data>, Key, Data> where Data : AbstractFSMData
+public class GenericFSM<Key, Data> : GenericFSMCustomState<AbstractFSMStateDatabase<Key, Data>, AbstractFSMTransitioner<Key, Data>, IFSMState<Data>, Key, Data> where Data : AbstractFSMData
 {
-    public override event Action<FSMState<Data>, FSMState<Data>> OnStateChanged;
+    public override event Action<IFSMState<Data>, IFSMState<Data>> OnStateChanged;
 
     public GenericFSM(AbstractFSMStateDatabase<Key, Data> fSMStateDatabase, AbstractFSMTransitioner<Key, Data> fSMTransitioner) :
         base(fSMStateDatabase, fSMTransitioner)
@@ -10,7 +10,7 @@ public class GenericFSM<Key, Data> : GenericFSMCustomState<AbstractFSMStateDatab
     }
 }
 
-public class GenericFSMCustomState<Database, Transitioner, State, Key, Data> : AbstractFSMCustom<Database, Transitioner, State, Key, Data> where Data : AbstractFSMData where State : FSMState<Data> where Database : AbstractFSMStateDatabaseCustomState<State, Key, Data> where Transitioner : AbstractFSMTransitionerCustomState<State, Key, Data>
+public class GenericFSMCustomState<Database, Transitioner, State, Key, Data> : AbstractFSMCustom<Database, Transitioner, State, Key, Data> where Data : AbstractFSMData where State : IFSMState<Data> where Database : AbstractFSMStateDatabaseCustomState<State, Key, Data> where Transitioner : AbstractFSMTransitionerCustomState<State, Key, Data>
 {
     public override event Action<State, State> OnStateChanged;
 
@@ -23,15 +23,19 @@ public class GenericFSMCustomState<Database, Transitioner, State, Key, Data> : A
     {
         if (this.FSMStateDatabase.ContainsState(state))
         {
-            State newState = null;
+            State newState = default;
             if (this.CurrentState == null)
+            {
                 newState = this.FSMStateDatabase.GetStateByType(state);
+            }
             else
+            {
                 newState = this.FSMTransitioner.TransitionateState(this.CurrentType, state);
+            }
 
             if (null != newState)
             {
-                if (this.CurrentState != newState)
+                if (!newState.Equals(this.CurrentState))
                 {
                     this.OnStateChanged?.Invoke(this.CurrentState, newState);
                     this.CurrentState?.OnExit();
@@ -41,7 +45,9 @@ public class GenericFSMCustomState<Database, Transitioner, State, Key, Data> : A
                     this.CurrentState.OnEnter();
                 }
                 else
+                {
                     this.CurrentState?.Feed(data);
+                }
             }
         }
     }

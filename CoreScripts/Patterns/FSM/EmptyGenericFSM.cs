@@ -6,7 +6,7 @@
     }
 }
 
-public class EmptyGenericFSMCustomState<State, Key> : GenericFSMCustomState<EmptyFSMStateDatabaseCustomState<State, Key>, AbstractFSMTransitionerCustomState<State, Key, EmptyFSMStateData>, State, Key, EmptyFSMStateData> where State : FSMState<EmptyFSMStateData>
+public class EmptyGenericFSMCustomState<State, Key> : GenericFSMCustomState<EmptyFSMStateDatabaseCustomState<State, Key>, AbstractFSMTransitionerCustomState<State, Key, EmptyFSMStateData>, State, Key, EmptyFSMStateData> where State : IFSMState<EmptyFSMStateData>
 {
     public EmptyGenericFSMCustomState(EmptyFSMStateDatabaseCustomState<State, Key> fSMStateDatabase, AbstractFSMTransitionerCustomState<State, Key, EmptyFSMStateData> fSMTransitioner) :
         base(fSMStateDatabase, fSMTransitioner)

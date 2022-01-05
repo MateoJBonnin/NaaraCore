@@ -2,12 +2,12 @@
 
 public class EmptyFSMStateDatabase<Key> : DefaultFSMStateDatabase<Key, EmptyFSMStateData>
 {
-    public EmptyFSMStateDatabase(Dictionary<Key, FSMState<EmptyFSMStateData>> statesDatabase) : base(statesDatabase)
+    public EmptyFSMStateDatabase(Dictionary<Key, IFSMState<EmptyFSMStateData>> statesDatabase) : base(statesDatabase)
     {
     }
 }
 
-public class EmptyFSMStateDatabaseCustomState<State, Key> : DefaultFSMStateDatabaseCustomState<State, Key, EmptyFSMStateData> where State : FSMState<EmptyFSMStateData>
+public class EmptyFSMStateDatabaseCustomState<State, Key> : DefaultFSMStateDatabaseCustomState<State, Key, EmptyFSMStateData> where State : IFSMState<EmptyFSMStateData>
 {
     public EmptyFSMStateDatabaseCustomState()
     {

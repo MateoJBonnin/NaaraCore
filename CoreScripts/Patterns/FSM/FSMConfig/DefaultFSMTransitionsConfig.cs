@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-public class DefaultFSMTransitionsConfig<Key, Data> : DefaultFSMTransitionsConfigCustomState<AbstractFSMStateDatabase<Key, Data>, FSMState<Data>, Key, Data>
+public class DefaultFSMTransitionsConfig<Key, Data> : DefaultFSMTransitionsConfigCustomState<AbstractFSMStateDatabase<Key, Data>, IFSMState<Data>, Key, Data>
     where Data : AbstractFSMData
 {
     public DefaultFSMTransitionsConfig(AbstractFSMStateDatabase<Key, Data> stateDatabase) : base(stateDatabase)
@@ -13,7 +13,7 @@ public class DefaultFSMTransitionsConfig<Key, Data> : DefaultFSMTransitionsConfi
 }
 
 public class DefaultFSMTransitionsConfigCustomState<Database, State, Key, Data> : AbstractFSMTransitionsConfigCustomState<Database, State, Key, Data>
-    where Data : AbstractFSMData where State : FSMState<Data> where Database : AbstractFSMStateDatabaseCustomState<State, Key, Data>
+    where Data : AbstractFSMData where State : IFSMState<Data> where Database : AbstractFSMStateDatabaseCustomState<State, Key, Data>
 {
     protected GenericDatabase<Key, Key> TransitionsDatabase
     {
@@ -53,13 +53,17 @@ public class DefaultFSMTransitionsConfigCustomState<Database, State, Key, Data> 
     public override void ConfigureConnections(FSMStateLinksData<Key> configData)
     {
         foreach (FSMStateLink<Key> stateConn in configData.linksData)
+        {
             this.SetTransition(stateConn.stateFrom, stateConn.stateTo);
+        }
     }
 
     public void ConfigureConnections<R>(FSMStateLinksData<R> configData) where R : Key
     {
         foreach (FSMStateLink<R> stateConn in configData.linksData)
+        {
             this.SetTransition(stateConn.stateFrom, stateConn.stateTo);
+        }
     }
 
     public override void SetTransition(Key from, Key to)
@@ -76,11 +80,12 @@ public class DefaultFSMTransitionsConfigCustomState<Database, State, Key, Data> 
     {
         List<Key> transitionsFrom = this.TransitionsDatabase.GetData(from);
 
-        if (transitionsFrom != null && transitionsFrom.Contains(to))
+        if ((transitionsFrom != null) &&
+            transitionsFrom.Contains(to))
         {
             return this.FSMStateDatabase.GetStateByType(transitionsFrom.Find(state => state.Equals(to)));
         }
 
-        return null;
+        return default;
     }
 }

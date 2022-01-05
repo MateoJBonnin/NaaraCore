@@ -78,7 +78,7 @@ namespace Pool
         {
             this.gameplayCoroutineManager.AppCoroutineStarter(this.LazyCreate(TIME_SLICING_COUNT, this.StartAmount, item =>
                 {
-                    ((IPooleable) item).DisableObject();
+                    ((IPooleable) item).DisablePoolObject();
                     this.itemQueue.Enqueue(new PooleableObject<T>(item));
                     return item;
                 }, () => { this.OnInitPoolFinished?.Invoke(); }

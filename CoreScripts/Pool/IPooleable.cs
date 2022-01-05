@@ -2,7 +2,7 @@
 {
     public interface IPooleable
     {
-        void EnableObject();
-        void DisableObject();
+        void EnablePoolObject();
+        void DisablePoolObject();
     }
 }

@@ -1,8 +1,8 @@
-﻿public abstract class AbstractFSMTransitionsConfig<Key, Data> : AbstractFSMTransitionsConfigCustomState<AbstractFSMStateDatabase<Key, Data>, FSMState<Data>, Key, Data> where Data : AbstractFSMData
+﻿public abstract class AbstractFSMTransitionsConfig<Key, Data> : AbstractFSMTransitionsConfigCustomState<AbstractFSMStateDatabase<Key, Data>, IFSMState<Data>, Key, Data> where Data : AbstractFSMData
 {
 }
 
-public abstract class AbstractFSMTransitionsConfigCustomState<Database, State, Key, Data> where Data : AbstractFSMData where State : FSMState<Data> where Database : AbstractFSMStateDatabaseCustomState<State, Key, Data>
+public abstract class AbstractFSMTransitionsConfigCustomState<Database, State, Key, Data> where Data : AbstractFSMData where State : IFSMState<Data> where Database : AbstractFSMStateDatabaseCustomState<State, Key, Data>
 {
     protected abstract Database FSMStateDatabase { get; set; }
 

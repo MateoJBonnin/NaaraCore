@@ -3,32 +3,32 @@ using System.Linq;
 
 public class DefaultFSMStateDatabase<Key, Data> : AbstractFSMStateDatabase<Key, Data> where Data : AbstractFSMData
 {
-    protected Dictionary<Key, FSMState<Data>> StatesDatabase
+    protected Dictionary<Key, IFSMState<Data>> StatesDatabase
     {
         get;
     }
 
     public DefaultFSMStateDatabase()
     {
-        this.StatesDatabase = new Dictionary<Key, FSMState<Data>>();
+        this.StatesDatabase = new Dictionary<Key, IFSMState<Data>>();
     }
 
-    public DefaultFSMStateDatabase(Dictionary<Key, FSMState<Data>> statesDatabase) : this()
+    public DefaultFSMStateDatabase(Dictionary<Key, IFSMState<Data>> statesDatabase) : this()
     {
         this.ConfigureStates(statesDatabase);
     }
 
-    public override void ConfigureStates(Dictionary<Key, FSMState<Data>> statesData)
+    protected virtual void ConfigureStates(Dictionary<Key, IFSMState<Data>> statesData)
     {
-        foreach (KeyValuePair<Key, FSMState<Data>> state in statesData)
+        foreach (KeyValuePair<Key, IFSMState<Data>> state in statesData)
         {
             this.SetState(state.Key, state.Value);
         }
     }
 
-    public override void SetState(Key stateKey, FSMState<Data> fSMState)
+    public override void SetState(Key stateKey, IFSMState<Data> FSMState)
     {
-        this.StatesDatabase[stateKey] = fSMState;
+        this.StatesDatabase[stateKey] = FSMState;
     }
 
     public override void RemoveState(Key stateKey)
@@ -36,15 +36,15 @@ public class DefaultFSMStateDatabase<Key, Data> : AbstractFSMStateDatabase<Key, 
         this.StatesDatabase.Remove(stateKey);
     }
 
-    public override FSMState<Data> GetStateByType(Key type)
+    public override IFSMState<Data> GetStateByType(Key type)
     {
-        this.StatesDatabase.TryGetValue(type, out FSMState<Data> stateToReturn);
+        this.StatesDatabase.TryGetValue(type, out IFSMState<Data> stateToReturn);
         return stateToReturn;
     }
 
-    public override Key GetTypeByState(FSMState<Data> stateType)
+    public override Key GetTypeByState(IFSMState<Data> stateType)
     {
-        foreach (KeyValuePair<Key, FSMState<Data>> state in this.StatesDatabase)
+        foreach (KeyValuePair<Key, IFSMState<Data>> state in this.StatesDatabase)
         {
             if (state.Value == stateType)
             {
@@ -60,7 +60,7 @@ public class DefaultFSMStateDatabase<Key, Data> : AbstractFSMStateDatabase<Key, 
         return this.GetStateByType(stateKey) != null;
     }
 
-    public override List<FSMState<Data>> GetAllStates()
+    public override List<IFSMState<Data>> GetAllStates()
     {
         return this.StatesDatabase.Values.ToList();
     }
@@ -71,7 +71,7 @@ public class DefaultFSMStateDatabase<Key, Data> : AbstractFSMStateDatabase<Key, 
     }
 }
 
-public class DefaultFSMStateDatabaseCustomState<State, Key, Data> : AbstractFSMStateDatabaseCustomState<State, Key, Data> where Data : AbstractFSMData where State : FSMState<Data>
+public class DefaultFSMStateDatabaseCustomState<State, Key, Data> : AbstractFSMStateDatabaseCustomState<State, Key, Data> where Data : AbstractFSMData where State : IFSMState<Data>
 {
     protected Dictionary<Key, State> StatesDatabase
     {
@@ -88,7 +88,7 @@ public class DefaultFSMStateDatabaseCustomState<State, Key, Data> : AbstractFSMS
         this.ConfigureStates(statesDatabase);
     }
 
-    public override void ConfigureStates(Dictionary<Key, State> statesData)
+    protected virtual void ConfigureStates(Dictionary<Key, State> statesData)
     {
         foreach (KeyValuePair<Key, State> state in statesData)
         {
@@ -96,9 +96,9 @@ public class DefaultFSMStateDatabaseCustomState<State, Key, Data> : AbstractFSMS
         }
     }
 
-    public override void SetState(Key stateKey, State fSMState)
+    public override void SetState(Key stateKey, State FSMState)
     {
-        this.StatesDatabase[stateKey] = fSMState;
+        this.StatesDatabase[stateKey] = FSMState;
     }
 
     public override void RemoveState(Key stateKey)
@@ -116,7 +116,7 @@ public class DefaultFSMStateDatabaseCustomState<State, Key, Data> : AbstractFSMS
     {
         foreach (KeyValuePair<Key, State> state in this.StatesDatabase)
         {
-            if (state.Value == stateType)
+            if (state.Value.Equals(stateType))
             {
                 return state.Key;
             }

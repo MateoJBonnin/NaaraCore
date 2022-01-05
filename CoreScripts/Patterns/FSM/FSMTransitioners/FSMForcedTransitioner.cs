@@ -8,13 +8,13 @@
     }
 
 
-    public override FSMState<Data> TransitionateState(Key fromState, Key toState)
+    public override IFSMState<Data> TransitionateState(Key fromState, Key toState)
     {
         return this.stateDatabase.GetStateByType(toState);
     }
 }
 
-public class FSMForcedTransitionerCustomState<R, T, W> : AbstractFSMTransitionerCustomState<R, T, W> where W : AbstractFSMData where R : FSMState<W>
+public class FSMForcedTransitionerCustomState<R, T, W> : AbstractFSMTransitionerCustomState<R, T, W> where W : AbstractFSMData where R : IFSMState<W>
 {
     protected AbstractFSMStateDatabaseCustomState<R, T, W> stateDatabase;
 
