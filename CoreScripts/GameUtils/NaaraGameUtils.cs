@@ -21,4 +21,17 @@ public static class NaaraGameUtils
     {
         return Vector3.Distance(originPoint.position, targetPoint) <= distance;
     }
+
+    public static bool IsCloseTo(this Transform originPoint, Transform targetPoint, float distance)
+    {
+        Vector3 originPointYX0 = originPoint.position;
+        originPointYX0.y = 0f;
+        originPointYX0.x = 0f;
+
+        Vector3 targetPointXY0 = targetPoint.position;
+        targetPointXY0.y = 0f;
+        targetPointXY0.x = 0f;
+
+        return Vector3.Distance(originPointYX0, targetPointXY0) <= distance;
+    }
 }
