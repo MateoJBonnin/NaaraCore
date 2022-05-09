@@ -62,6 +62,11 @@ public class CoroutineManager
         Timing.KillCoroutines(this.CoroutinesTag + customTag);
     }
 
+    public void StopAllCoroutines(string customTag)
+    {
+        Timing.KillCoroutines(this.CoroutinesTag + customTag);
+    }
+
     public void StopAllCoroutines()
     {
         Timing.KillCoroutines(this.CoroutinesTag);
